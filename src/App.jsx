@@ -1,8 +1,7 @@
-import "./App.css";
-import { Outlet } from "react-router-dom";
+import MobileLayout from "./layouts/MobileLayout";
 
 function App() {
-  return <Outlet />;
+  return <MobileLayout />;
 }
 
 export default App;
