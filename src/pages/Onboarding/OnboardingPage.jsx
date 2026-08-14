@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import heroImage from "@assets/images/Background-Image.png";
+import Button from "@components/common/Button";
 
 const OnboardingPage = () => {
   return (
@@ -10,22 +11,24 @@ const OnboardingPage = () => {
       <ContentBox>
         <Title>Welcome to AURA</Title>
 
-        <Description>
-          럭셔리 세계로 들어오세요.
-          <br />
-          컬렉션을 관리하고, 독점적인 케어 서비스를 이용하며
-          <br />
-          360도 브랜드 경험을 만끽해 보세요.
-        </Description>
+        <ContentGroup>
+          <Description>
+            럭셔리 세계로 들어오세요.
+            <br />
+            컬렉션을 관리하고, 독점적인 케어 서비스를 이용하며
+            <br />
+            360도 브랜드 경험을 만끽해 보세요.
+          </Description>
 
-        <ButtonGroup>
-          <PrimaryButton as={Link} to="/login">
-            로그인하기
-          </PrimaryButton>
-          <SecondaryButton as={Link} to="/signup">
-            회원가입하기
-          </SecondaryButton>
-        </ButtonGroup>
+          <ButtonGroup>
+            <Button as={Link} to="/login">
+              로그인하기
+            </Button>
+            <Button as={Link} to="/signup" $variant="outline">
+              회원가입하기
+            </Button>
+          </ButtonGroup>
+        </ContentGroup>
 
         <Terms>By continuing, you agree to our Terms.</Terms>
       </ContentBox>
@@ -46,6 +49,7 @@ const PageWrapper = styled.div`
 
 const HeroImage = styled.div`
   flex: 1;
+  position: relative;
   background-color: var(--color-background-muted);
   background-image: linear-gradient(
       180deg,
@@ -60,10 +64,15 @@ const HeroImage = styled.div`
 `;
 
 const ContentBox = styled.div`
+  position: relative;
+  z-index: 1;
+  margin-top: -4rem;
   display: flex;
   flex-direction: column;
   padding: 2.4rem 2rem 3.2rem;
-  background-color: var(--color-white);
+  background-color: var(--color-ivory);
+  border-radius: 32px 32px 12px 12px;
+  box-shadow: 0 -8px 20px 0 rgba(45, 27, 51, 0.02);
 `;
 
 const Title = styled.h1`
@@ -71,46 +80,36 @@ const Title = styled.h1`
   font-size: 2.4rem;
   font-weight: 700;
   text-align: center;
+  color: var(--color-primary);
+`;
+
+const ContentGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4.25rem;
+  align-self: stretch;
 `;
 
 const Description = styled.p`
-  margin: 0 0 3.2rem;
-  color: var(--color-navy);
-  font-size: 1.4rem;
-  line-height: 1.6;
+  margin: 0;
+  align-self: stretch;
+  color: var(--color-darkgray);
+  font-size: 1.15rem;
+  line-height: 1.5;
   text-align: center;
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   flex-direction: column;
+  align-self: stretch;
   gap: 1.2rem;
-`;
-
-const PrimaryButton = styled.button`
-  padding: 1.4rem;
-  border-radius: 0.8rem;
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  font-size: 1.6rem;
-  font-weight: 600;
-  text-align: center;
-`;
-
-const SecondaryButton = styled.button`
-  padding: 1.4rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.8rem;
-  background-color: var(--color-white);
-  color: var(--color-black);
-  font-size: 1.6rem;
-  font-weight: 600;
-  text-align: center;
 `;
 
 const Terms = styled.p`
   margin: 2rem 0 0;
-  color: var(--color-navy);
+  color: var(--color-gray);
   font-size: 1.2rem;
   text-align: center;
 `;

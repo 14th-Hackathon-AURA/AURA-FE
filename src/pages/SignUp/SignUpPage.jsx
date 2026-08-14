@@ -1,21 +1,16 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import eyeOpenIcon from "@assets/icons/Eye-open.svg";
-import eyeCloseIcon from "@assets/icons/Eye-close.svg";
+import Button from "@components/common/Button";
+import PageHeader from "@components/common/PageHeader";
+import FieldGroup from "@components/login/FieldGroup";
+import Label from "@components/login/Label";
+import Input from "@components/login/Input";
+import PasswordInput from "@components/login/PasswordInput";
 
 const SignUpPage = () => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isPasswordConfirmVisible, setIsPasswordConfirmVisible] = useState(false);
-
   return (
     <PageWrapper>
-      <Header>
-        <BackButton as={Link} to="/" aria-label="이전으로">
-          ‹
-        </BackButton>
-        <HeaderTitle>회원가입</HeaderTitle>
-      </Header>
+      <PageHeader title="회원가입" backTo="/" />
 
       <Main>
         <SectionTitle>계정 생성</SectionTitle>
@@ -34,41 +29,20 @@ const SignUpPage = () => {
               <Label htmlFor="password">비밀번호</Label>
               <HelperText>최소 8자 이상, 대문자·숫자·특수문자 포함</HelperText>
             </LabelRow>
-            <PasswordField>
-              <Input id="password" type={isPasswordVisible ? "text" : "password"} />
-              <ToggleButton
-                type="button"
-                aria-label={isPasswordVisible ? "비밀번호 숨김" : "비밀번호 표시"}
-                onClick={() => setIsPasswordVisible((prev) => !prev)}
-              >
-                <img
-                  src={isPasswordVisible ? eyeOpenIcon : eyeCloseIcon}
-                  alt=""
-                />
-              </ToggleButton>
-            </PasswordField>
+            <PasswordInput
+              id="password"
+              hiddenLabel="비밀번호 표시"
+              visibleLabel="비밀번호 숨김"
+            />
           </FieldGroup>
 
           <FieldGroup>
             <Label htmlFor="passwordConfirm">비밀번호 확인</Label>
-            <PasswordField>
-              <Input
-                id="passwordConfirm"
-                type={isPasswordConfirmVisible ? "text" : "password"}
-              />
-              <ToggleButton
-                type="button"
-                aria-label={
-                  isPasswordConfirmVisible ? "비밀번호 확인 숨김" : "비밀번호 확인 표시"
-                }
-                onClick={() => setIsPasswordConfirmVisible((prev) => !prev)}
-              >
-                <img
-                  src={isPasswordConfirmVisible ? eyeOpenIcon : eyeCloseIcon}
-                  alt=""
-                />
-              </ToggleButton>
-            </PasswordField>
+            <PasswordInput
+              id="passwordConfirm"
+              hiddenLabel="비밀번호 확인 표시"
+              visibleLabel="비밀번호 확인 숨김"
+            />
           </FieldGroup>
 
           <CheckboxGroup>
@@ -110,27 +84,6 @@ const PageWrapper = styled.div`
   min-height: 100dvh;
 `;
 
-const Header = styled.header`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.6rem 2rem;
-  border-bottom: 1px solid var(--color-border);
-`;
-
-const BackButton = styled.button`
-  position: absolute;
-  left: 2rem;
-  font-size: 2rem;
-`;
-
-const HeaderTitle = styled.h1`
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 600;
-`;
-
 const Main = styled.main`
   flex: 1;
   padding: 2.4rem 2rem 3.2rem;
@@ -154,57 +107,15 @@ const Form = styled.form`
   gap: 2rem;
 `;
 
-const FieldGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-`;
-
 const LabelRow = styled.div`
   display: flex;
   align-items: baseline;
   justify-content: space-between;
 `;
 
-const Label = styled.label`
-  font-size: 1.4rem;
-  font-weight: 600;
-`;
-
 const HelperText = styled.span`
   color: var(--color-navy);
   font-size: 1.2rem;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 1.2rem 1.4rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.8rem;
-  font-size: 1.4rem;
-`;
-
-const PasswordField = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  ${Input} {
-    padding-right: 4rem;
-  }
-`;
-
-const ToggleButton = styled.button`
-  position: absolute;
-  right: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  img {
-    width: 1.6rem;
-    height: 1.6rem;
-  }
 `;
 
 const CheckboxGroup = styled.div`
@@ -219,43 +130,51 @@ const CheckboxRow = styled.div`
   gap: 0.8rem;
 `;
 
+const checkIcon = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+)}`;
+
 const Checkbox = styled.input`
+  appearance: none;
   width: 1.8rem;
   height: 1.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.3rem;
+  background-color: var(--color-white);
+  cursor: pointer;
+
+  &:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    background-image: url("${checkIcon}");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
 `;
 
 const CheckboxLabel = styled.label`
   font-size: 1.4rem;
-  font-weight: 600;
 `;
 
 const CheckboxDescription = styled.p`
   margin: 0;
-  padding-left: 2.6rem;
   color: var(--color-navy);
   font-size: 1.2rem;
 `;
 
-const SubmitButton = styled.button`
+const SubmitButton = styled(Button)`
   margin-top: 1.2rem;
-  padding: 1.4rem;
-  border-radius: 0.8rem;
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  font-size: 1.6rem;
-  font-weight: 600;
-  text-align: center;
 `;
 
 const FooterText = styled.p`
   margin: 2.4rem 0 0;
-  color: var(--color-navy);
+  color: #1F2937;
   font-size: 1.4rem;
   text-align: center;
 `;
 
 const FooterLink = styled(Link)`
-  color: var(--color-primary);
-  font-weight: 600;
+  color: var(--color-mediumgray);
+  font-style: normal;
   text-decoration: underline;
 `;
