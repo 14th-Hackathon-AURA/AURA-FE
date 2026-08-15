@@ -1,24 +1,51 @@
 import { Link } from "react-router-dom";
-import styled from "styled-components";
-import heroImage from "@assets/images/Background-Image.png";
+import styled, { css } from "styled-components";
 import Button from "@components/common/Button";
+
+import bagImage from "@assets/images/onboarding/image27.png";
+import blobOuter from "@assets/images/onboarding/ellipse6.svg";
+import blobInner from "@assets/images/onboarding/ellipse5.svg";
+import iconCalendar from "@assets/images/onboarding/frame160-calendar.svg";
+import iconProtect from "@assets/images/onboarding/frame159-helmet.svg";
+import iconChecklist from "@assets/images/onboarding/frame161-checklist.svg";
+import iconThumbsUp from "@assets/images/onboarding/frame163-thumbsup.svg";
+import iconSparkle from "@assets/images/onboarding/frame162-sparkle.svg";
+import markPlus from "@assets/images/onboarding/vector-plus.svg";
+import markStar from "@assets/images/onboarding/vector-star.svg";
 
 const OnboardingPage = () => {
   return (
     <PageWrapper>
-      <HeroImage role="img" aria-label="AURA 컬렉션 이미지" />
+      <HeroArea>
+        <Decor as="img" src={blobOuter} alt="" aria-hidden="true" $left="23.333%" $top="25.077cqw" $width="53.333%" />
+        <Decor as="img" src={blobInner} alt="" aria-hidden="true" $left="38.103%" $top="41.077cqw" $width="35.077%" />
+        <Decor as="img" src={bagImage} alt="AURA 컬렉션 가방 이미지" $left="22.923%" $top="33.692cqw" $width="54.154%" $ratio="264 / 176" $fit="cover" />
+
+        <Decor as="img" src={iconCalendar} alt="" aria-hidden="true" $left="24.154%" $top="60.359cqw" $width="14.564%" />
+        <Decor as="img" src={iconProtect} alt="" aria-hidden="true" $left="44.256%" $top="19.744cqw" $width="11.282%" />
+        <Decor as="img" src={iconChecklist} alt="" aria-hidden="true" $left="71.949%" $top="34.103cqw" $width="8.205%" />
+        <Decor as="img" src={iconThumbsUp} alt="" aria-hidden="true" $left="71.949%" $top="68.769cqw" $width="6.154%" />
+        <Decor as="img" src={iconSparkle} alt="" aria-hidden="true" $left="24.154%" $top="29.795cqw" $width="8.205%" />
+
+        <Decor as="img" src={markPlus} alt="" aria-hidden="true" $left="17.817%" $top="54.205cqw" $width="2.505%" $rotate={45} />
+        <Decor as="img" src={markStar} alt="" aria-hidden="true" $left="72.769%" $top="16.256cqw" $width="2.051%" />
+      </HeroArea>
 
       <ContentBox>
-        <Title>Welcome to AURA</Title>
-
         <ContentGroup>
-          <Description>
-            럭셔리 세계로 들어오세요.
-            <br />
-            컬렉션을 관리하고, 독점적인 케어 서비스를 이용하며
-            <br />
-            360도 브랜드 경험을 만끽해 보세요.
-          </Description>
+          <TextGroup>
+            <Title>
+              <span>당신의 명품,</span>
+              <span>
+                <Accent>AURA</Accent>가 지켜드릴게요
+              </span>
+            </Title>
+            <Description>
+              보관부터 케어, 수선까지
+              <br />
+              모든 순간을 함께 관리합니다
+            </Description>
+          </TextGroup>
 
           <ButtonGroup>
             <Button as={Link} to="/login">
@@ -38,64 +65,91 @@ const OnboardingPage = () => {
 
 export default OnboardingPage;
 
-// ↓ 예전 CSS 파일에 .wrapper, .hero, .btn 이렇게 클래스 쓰던 걸
-//   여기서는 태그처럼 만들어서 위 JSX에서 바로 사용합니다.
-
 const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  background-color: var(--color-white);
+  container-type: inline-size;
 `;
 
-const HeroImage = styled.div`
-  flex: 1;
+const HeroArea = styled.div`
   position: relative;
-  background-color: var(--color-background-muted);
-  background-image: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.1) 0%,
-      rgba(0, 0, 0, 0) 50%,
-      #fdfbf7 100%
-    ),
-    url("${heroImage}");
-  background-size: cover, cover;
-  background-position: center, center;
-  background-repeat: no-repeat, no-repeat;
+  flex: 1 1 auto;
+  min-height: 28rem;
+  min-height: 74cqw;
+  width: 100%;
+  background-color: #f8f8fb;
+  overflow: hidden;
+  border-radius: 1.2rem 1.2rem 0 0;
+`;
+
+const Decor = styled.img`
+  position: absolute;
+  left: ${({ $left }) => $left};
+  top: ${({ $top }) => $top};
+  width: ${({ $width }) => $width};
+  aspect-ratio: ${({ $ratio }) => $ratio || "1 / 1"};
+  ${({ $fit }) =>
+    $fit &&
+    css`
+      object-fit: ${$fit};
+    `}
+  ${({ $rotate }) =>
+    $rotate &&
+    css`
+      transform: rotate(${$rotate}deg);
+    `}
 `;
 
 const ContentBox = styled.div`
   position: relative;
   z-index: 1;
-  margin-top: -4rem;
+  margin-top: -3.22rem;
   display: flex;
   flex-direction: column;
-  padding: 2.4rem 2rem 3.2rem;
-  background-color: var(--color-ivory);
-  border-radius: 32px 32px 12px 12px;
-  box-shadow: 0 -8px 20px 0 rgba(45, 27, 51, 0.02);
-`;
-
-const Title = styled.h1`
-  margin: 0 0 1.2rem;
-  font-size: 2.4rem;
-  font-weight: 700;
-  text-align: center;
-  color: var(--color-primary);
+  padding: 3.2rem 2.4rem 4.8rem;
+  background-color: var(--color-white);
+  border-radius: 3.2rem 3.2rem 1.2rem 1.2rem;
+  box-shadow: 0 -0.8rem 1rem 0 rgba(45, 27, 51, 0.02);
 `;
 
 const ContentGroup = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 4.25rem;
-  align-self: stretch;
+  align-items: center;
+  gap: 6.8rem;
+`;
+
+const TextGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+  width: 100%;
+`;
+
+const Title = styled.h1`
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 2.8rem;
+  letter-spacing: -0.044rem;
+  text-align: center;
+  color: var(--color-primary);
+`;
+
+const Accent = styled.span`
+  color: var(--color-accent-purple);
 `;
 
 const Description = styled.p`
   margin: 0;
-  align-self: stretch;
+  max-width: 28rem;
   color: var(--color-darkgray);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   line-height: 1.5;
   text-align: center;
 `;
@@ -108,8 +162,9 @@ const ButtonGroup = styled.div`
 `;
 
 const Terms = styled.p`
-  margin: 2rem 0 0;
+  margin: 1.8rem 0 0;
   color: var(--color-gray);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  line-height: 1.5;
   text-align: center;
 `;
