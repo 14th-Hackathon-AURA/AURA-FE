@@ -1,6 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import useMemberProfile from "./useMemberProfile";
 import useMultiSelect from "./useMultiSelect";
+
+const SAVE_COMPLETE_REDIRECT_DELAY = 1200;
 
 export const GENDER_OPTIONS = ["여성", "남성", "공개하지 않음"];
 
@@ -21,6 +24,7 @@ export const USAGE_OPTIONS = ["일상", "특별한 날", "여행", "비즈니스
 
 const useProfileEditForm = () => {
   const profile = useMemberProfile();
+  const navigate = useNavigate();
 
   const [nickname, setNickname] = useState(profile.nickname);
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState(profile.avatarUrl);
@@ -41,6 +45,12 @@ const useProfileEditForm = () => {
     event.preventDefault();
     setIsSaved(true);
   }, []);
+
+  useEffect(() => {
+    if (!isSaved) return;
+    const timer = setTimeout(() => navigate("/mypage"), SAVE_COMPLETE_REDIRECT_DELAY);
+    return () => clearTimeout(timer);
+  }, [isSaved, navigate]);
 
   return {
     nickname,
