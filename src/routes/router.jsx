@@ -5,6 +5,7 @@ import OnboardingPage from "@pages/Onboarding/OnboardingPage";
 import SignUpPage from "@pages/SignUp/SignUpPage";
 import LoginPage from "@pages/Login/LoginPage";
 import SettingsHomePage from "@pages/MyHome/SettingsHomePage";
+import EditProfilePage from "@pages/MyHome/EditProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "/mypage",
         element: <SettingsHomePage />,
+      },
+      {
+        path: "/mypage/edit-profile",
+        element: <EditProfilePage />,
       },
     ],
   },
