@@ -148,7 +148,7 @@ const SaveButton = styled(Button)`
   align-self: flex-start;
   width: 8.2rem;
   height: 3.3rem;
-  padding: 1.2rem 2.4rem;
+  padding: 0.5rem 1.0rem;
   border-radius: 0.2rem;
   font-size: 1.2rem;
 `;

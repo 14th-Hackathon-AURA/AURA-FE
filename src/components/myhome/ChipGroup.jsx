@@ -45,7 +45,7 @@ const Chip = styled.button`
   justify-content: center;
   width: 6.8rem;
   height: 3.3rem;
-  padding: 1.2rem 2.4rem;
+  padding: 0.5rem 1.0rem;
   border-radius: 0.2rem;
   font-size: 1.2rem;
   border: 1px solid var(--color-black);
