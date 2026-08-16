@@ -9,7 +9,7 @@ const ProfileEditCompleteOverlay = () => (
 export default ProfileEditCompleteOverlay;
 
 const Overlay = styled.div`
-  position: fixed;
+  position: absolute;
   inset: 0;
   display: flex;
   align-items: center;

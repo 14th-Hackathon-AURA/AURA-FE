@@ -105,6 +105,7 @@ const EditProfilePage = () => {
 export default EditProfilePage;
 
 const PageWrapper = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
