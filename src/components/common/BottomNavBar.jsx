@@ -64,11 +64,10 @@ const Nav = styled.nav`
   position: sticky;
   bottom: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5.2rem;
+  align-items: flex-start;
+  justify-content: space-around;
   width: 100%;
-  padding: 0 5.3rem 2rem;
+  padding: 0 1.2rem 2rem;
   background: var(--color-soft-gray);
   box-shadow: 0 -0.4rem 4rem 0 rgba(0, 0, 0, 0.1);
   border-radius: 0.4rem 0.4rem 0 0;
@@ -77,10 +76,11 @@ const Nav = styled.nav`
 const TabLink = styled(Link)`
   position: relative;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   gap: 0.3rem;
-  width: 4rem;
+  min-width: 0;
   padding-top: 1.6rem;
 
   &::before {
@@ -106,6 +106,8 @@ const TabIcon = styled.img`
 const TabLabel = styled.span`
   font-size: 1.1rem;
   line-height: 1.5;
+  white-space: nowrap;
+  text-align: center;
   color: ${({ $active }) =>
     $active ? "var(--color-primary)" : "var(--color-tab-gray)"};
 `;
