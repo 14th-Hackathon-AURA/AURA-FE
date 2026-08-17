@@ -48,7 +48,7 @@ const BottomNavBar = () => {
       {TABS.map((tab) => {
         const active = pathname.startsWith(tab.to);
         return (
-          <TabLink key={tab.key} to={tab.to}>
+          <TabLink key={tab.key} to={tab.to} $active={active}>
             <TabIcon src={active ? tab.activeIcon : tab.icon} alt="" />
             <TabLabel $active={active}>{tab.label}</TabLabel>
           </TabLink>
@@ -68,18 +68,33 @@ const Nav = styled.nav`
   justify-content: center;
   gap: 5.2rem;
   width: 100%;
-  padding: 1.6rem 5.3rem 2rem;
+  padding: 0 5.3rem 2rem;
   background: var(--color-soft-gray);
   box-shadow: 0 -0.4rem 4rem 0 rgba(0, 0, 0, 0.1);
   border-radius: 0.4rem 0.4rem 0 0;
 `;
 
 const TabLink = styled(Link)`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.3rem;
   width: 4rem;
+  padding-top: 1.6rem;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5rem;
+    height: 0.4rem;
+    border-radius: 100px;
+    background: var(--color-primary);
+    opacity: ${({ $active }) => ($active ? 1 : 0)};
+  }
 `;
 
 const TabIcon = styled.img`
