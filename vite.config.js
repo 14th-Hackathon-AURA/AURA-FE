@@ -15,6 +15,7 @@ export default defineConfig({
       "@routes": path.resolve("src/routes"),
       "@styles": path.resolve("src/styles"),
       "@utils": path.resolve("src/utils"),
+      "@mocks": path.resolve("src/mocks"),
     },
   },
 });
