@@ -1,15 +1,43 @@
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import closetIcon from "@assets/icons/nav/closet.svg";
+import closetActiveIcon from "@assets/icons/nav/closet-active.svg";
 import careIcon from "@assets/icons/nav/care.svg";
+import careActiveIcon from "@assets/icons/nav/care-active.svg";
 import communityIcon from "@assets/icons/nav/community.svg";
+import communityActiveIcon from "@assets/icons/nav/community-active.svg";
 import myHomeIcon from "@assets/icons/nav/myhome.svg";
+import myHomeActiveIcon from "@assets/icons/nav/myhome-active.svg";
 
 const TABS = [
-  { key: "closet", label: "클로젯", to: "/closet", icon: closetIcon },
-  { key: "care", label: "케어", to: "/care", icon: careIcon },
-  { key: "community", label: "커뮤니티", to: "/community", icon: communityIcon },
-  { key: "mypage", label: "마이 홈", to: "/mypage", icon: myHomeIcon },
+  {
+    key: "closet",
+    label: "클로젯",
+    to: "/closet",
+    icon: closetIcon,
+    activeIcon: closetActiveIcon,
+  },
+  {
+    key: "care",
+    label: "케어",
+    to: "/care",
+    icon: careIcon,
+    activeIcon: careActiveIcon,
+  },
+  {
+    key: "community",
+    label: "커뮤니티",
+    to: "/community",
+    icon: communityIcon,
+    activeIcon: communityActiveIcon,
+  },
+  {
+    key: "mypage",
+    label: "마이 홈",
+    to: "/mypage",
+    icon: myHomeIcon,
+    activeIcon: myHomeActiveIcon,
+  },
 ];
 
 const BottomNavBar = () => {
@@ -21,7 +49,7 @@ const BottomNavBar = () => {
         const active = pathname.startsWith(tab.to);
         return (
           <TabLink key={tab.key} to={tab.to}>
-            <TabIcon src={tab.icon} alt="" />
+            <TabIcon src={active ? tab.activeIcon : tab.icon} alt="" />
             <TabLabel $active={active}>{tab.label}</TabLabel>
           </TabLink>
         );
@@ -63,5 +91,6 @@ const TabIcon = styled.img`
 const TabLabel = styled.span`
   font-size: 1.1rem;
   line-height: 1.5;
-  color: ${({ $active }) => ($active ? "var(--color-primary)" : "var(--color-tab-gray)")};
+  color: ${({ $active }) =>
+    $active ? "var(--color-primary)" : "var(--color-tab-gray)"};
 `;
