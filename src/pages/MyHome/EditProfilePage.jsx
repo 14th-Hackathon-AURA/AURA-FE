@@ -5,7 +5,7 @@ import ProfileImageEditor from "@components/myhome/ProfileImageEditor";
 import TextField from "@components/myhome/TextField";
 import SelectField from "@components/myhome/SelectField";
 import ChipGroup from "@components/myhome/ChipGroup";
-import ProfileEditCompleteOverlay from "@components/myhome/ProfileEditCompleteOverlay";
+import CompleteOverlay from "@components/common/CompleteOverlay";
 import useProfileEditForm, {
   GENDER_OPTIONS,
   AGE_OPTIONS,
@@ -97,7 +97,7 @@ const EditProfilePage = () => {
         <SaveButton type="submit">저장하기</SaveButton>
       </Main>
 
-      {isSaved && <ProfileEditCompleteOverlay />}
+      {isSaved && <CompleteOverlay message="프로필 수정 완료!" />}
     </PageWrapper>
   );
 };

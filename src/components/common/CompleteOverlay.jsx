@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
-const ProfileEditCompleteOverlay = () => (
+const CompleteOverlay = ({ message }) => (
   <Overlay>
-    <Toast>프로필 수정 완료!</Toast>
+    <Toast>{message}</Toast>
   </Overlay>
 );
 
-export default ProfileEditCompleteOverlay;
+export default CompleteOverlay;
 
 const Overlay = styled.div`
   position: absolute;
