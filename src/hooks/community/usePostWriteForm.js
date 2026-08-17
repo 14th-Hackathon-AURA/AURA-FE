@@ -1,16 +1,20 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCommunityStore from "@hooks/community/useCommunityStore";
+
+const SUBMIT_COMPLETE_REDIRECT_DELAY = 1200;
 
 const usePostWriteForm = () => {
   const navigate = useNavigate();
   const { addPost } = useCommunityStore();
+  const titleInputRef = useRef(null);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [taggedProduct, setTaggedProduct] = useState(null);
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleImageChange = useCallback((file) => {
     if (!file) return;
@@ -30,7 +34,11 @@ const usePostWriteForm = () => {
   const handleSubmit = useCallback(
     (event) => {
       event.preventDefault();
-      if (!title.trim()) return;
+
+      if (!title.trim()) {
+        titleInputRef.current?.focus();
+        return;
+      }
 
       addPost({
         title: title.trim(),
@@ -39,10 +47,16 @@ const usePostWriteForm = () => {
         taggedProduct,
       });
 
-      navigate("/community");
+      setIsSubmitted(true);
     },
-    [title, content, imagePreviewUrl, taggedProduct, addPost, navigate],
+    [title, content, imagePreviewUrl, taggedProduct, addPost],
   );
+
+  useEffect(() => {
+    if (!isSubmitted) return;
+    const timer = setTimeout(() => navigate("/community"), SUBMIT_COMPLETE_REDIRECT_DELAY);
+    return () => clearTimeout(timer);
+  }, [isSubmitted, navigate]);
 
   return {
     title,
@@ -57,6 +71,8 @@ const usePostWriteForm = () => {
     openTagModal,
     closeTagModal,
     confirmTag,
+    titleInputRef,
+    isSubmitted,
     handleSubmit,
   };
 };

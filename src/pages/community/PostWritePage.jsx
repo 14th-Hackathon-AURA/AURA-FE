@@ -4,6 +4,7 @@ import Button from "@components/common/Button";
 import ImageUploadField from "@components/community/ImageUploadField";
 import ProductTagRow from "@components/community/ProductTagRow";
 import ProductTagModal from "@components/community/ProductTagModal";
+import CompleteOverlay from "@components/common/CompleteOverlay";
 import tagIcon from "@assets/icons/community/tag.svg";
 import usePostWriteForm from "@hooks/community/usePostWriteForm";
 import { MOCK_CLOSET_ITEMS } from "@hooks/community/communityMockData";
@@ -22,6 +23,8 @@ const PostWritePage = () => {
     openTagModal,
     closeTagModal,
     confirmTag,
+    titleInputRef,
+    isSubmitted,
     handleSubmit,
   } = usePostWriteForm();
 
@@ -31,6 +34,7 @@ const PostWritePage = () => {
 
       <Main as="form" onSubmit={handleSubmit}>
         <TitleInput
+          ref={titleInputRef}
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           placeholder="제목을 작성해주세요"
@@ -91,6 +95,8 @@ const PostWritePage = () => {
           onConfirm={confirmTag}
         />
       )}
+
+      {isSubmitted && <CompleteOverlay message="게시물 등록 완료!" />}
     </PageWrapper>
   );
 };
@@ -121,7 +127,7 @@ const TitleInput = styled.input`
   color: var(--color-black);
 
   &::placeholder {
-    color: var(--color-black);
+    color: var(--color-placeholder-gray);
   }
 `;
 
