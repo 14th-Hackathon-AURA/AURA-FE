@@ -10,6 +10,7 @@ import CommunityPage from "@pages/community/CommunitiyPage";
 import PostDetailPage from "@pages/community/PostDetailPage";
 import PostWritePage from "@pages/community/PostWritePage";
 import CommunityProvider from "@hooks/community/CommunityProvider";
+import ChatPage from "@pages/chatbot/ChatPage";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: "/mypage/edit-profile",
         element: <EditProfilePage />,
+      },
+      {
+        path: "/chatbot",
+        element: <ChatPage />,
       },
       {
         path: "/community",
