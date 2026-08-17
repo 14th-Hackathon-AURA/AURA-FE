@@ -10,6 +10,7 @@ import CommunityPage from "@pages/community/CommunitiyPage";
 import PostDetailPage from "@pages/community/PostDetailPage";
 import PostWritePage from "@pages/community/PostWritePage";
 import CommunityProvider from "@hooks/community/CommunityProvider";
+import ClosetPage from "@pages/closet/ClosetPage";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
             element: <PostDetailPage />,
           },
         ],
+      },
+      {
+        path: "/closet",
+        element: <ClosetPage />,
       },
     ],
   },
