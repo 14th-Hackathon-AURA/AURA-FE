@@ -18,18 +18,33 @@ export const PRODUCT_REGISTER_CATEGORIES = [
 export const MOCK_CLOSET_PRODUCTS = [
   {
     id: "closet-1",
-    name: "Stark Backpack in Visetos",
+    brand: "MCM",
+    name: "Stark Backpack in Disco Visetos",
     category: "가방",
+    subCategory: "백팩",
+    price: 2150000,
     purchaseDate: "2025년 3월 12일",
+    purchasePlace: "MCM 롯데백화점 본점",
+    serialNumber: "등록됨",
+    diagnosisDate: "2026.07.22",
     verified: true,
     image: backpackImage,
   },
   {
     id: "closet-2",
+    brand: "MCM",
     name: "Aren Hobo in Visetos",
     category: "가방",
+    subCategory: "숄더백 & 크로스백",
+    price: 1890000,
     purchaseDate: "2025년 3월 12일",
+    purchasePlace: "MCM 롯데백화점 본점",
+    serialNumber: "등록됨",
+    diagnosisDate: "2026.07.22",
     verified: true,
     image: hoboImage,
   },
 ];
+
+export const getClosetProductById = (id) =>
+  MOCK_CLOSET_PRODUCTS.find((item) => item.id === id);
