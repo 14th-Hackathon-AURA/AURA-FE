@@ -11,6 +11,7 @@ import PostDetailPage from "@pages/community/PostDetailPage";
 import PostWritePage from "@pages/community/PostWritePage";
 import CommunityProvider from "@hooks/community/CommunityProvider";
 import ClosetPage from "@pages/closet/ClosetPage";
+import ProductRegisterPage from "@pages/closet/ProductRegisterPage";
 
 const router = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: "/closet",
         element: <ClosetPage />,
+      },
+      {
+        path: "/closet/register",
+        element: <ProductRegisterPage />,
       },
     ],
   },
