@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import BottomNavBar from "@components/common/BottomNavBar";
 import Button from "@components/common/Button";
@@ -9,6 +10,7 @@ import ChatbotButton from "@components/closet/ChatbotButton";
 import { CLOSET_CATEGORIES, MOCK_CLOSET_PRODUCTS } from "@mocks/closetMockData";
 
 const ClosetPage = () => {
+  const navigate = useNavigate();
   const [items, setItems] = useState(MOCK_CLOSET_PRODUCTS);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("전체");
@@ -58,7 +60,12 @@ const ClosetPage = () => {
         <Toolbar>
           <TitleRow>
             <Title>내 클로젯</Title>
-            <RegisterButton type="button">새 제품 등록하기</RegisterButton>
+            <RegisterButton
+              type="button"
+              onClick={() => navigate("/closet/register")}
+            >
+              새 제품 등록하기
+            </RegisterButton>
           </TitleRow>
 
           <ClosetSearchBar value={searchQuery} onChange={setSearchQuery} />
