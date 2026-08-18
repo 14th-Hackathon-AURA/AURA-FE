@@ -6,6 +6,7 @@ import Button from "@components/common/Button";
 import ChatBubble from "@components/chatbot/ChatBubble";
 import ChatInputBar from "@components/chatbot/ChatInputBar";
 import useMemberProfile from "@hooks/useMemberProfile";
+import { sendChatMessage } from "@apis/chat";
 
 // 추후 경로 수정 예정
 const VISIT_CARD_LIST_PATH = "/chatbot/visit-cards";
@@ -13,28 +14,45 @@ const VISIT_CARD_LIST_PATH = "/chatbot/visit-cards";
 const ChatPage = () => {
   const { nickname } = useMemberProfile();
   const [messages, setMessages] = useState([]);
+  const [sessionId, setSessionId] = useState(null);
+  const [isSending, setIsSending] = useState(false);
   const listEndRef = useRef(null);
 
   useEffect(() => {
     listEndRef.current?.scrollIntoView({ block: "end" });
   }, [messages]);
 
-  const handleSend = (text) => {
+  const handleSend = async (text) => {
     const userMessage = { id: Date.now(), role: "user", text };
     setMessages((prev) => [...prev, userMessage]);
+    setIsSending(true);
 
-    // 추후 백엔드 API 연결 후 수정 예정
-    window.setTimeout(() => {
+    try {
+      const data = await sendChatMessage({ sessionId, message: text });
+
+      if (data.session_id) setSessionId(data.session_id);
+
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
           role: "ai",
-          text: "카드 형식으로 정리를 완료했어요.\n다음을 눌러 확인해보세요.",
-          action: { label: "방문 카드 확인", to: VISIT_CARD_LIST_PATH },
+          text: data.reply, // 실제 응답 필드명 확인 후 필요시 수정
+          recommendedProducts: data.recommended_products || [],
         },
       ]);
-    }, 600);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: "ai",
+          text: "죄송해요, 답변을 가져오지 못했어요. 잠시 후 다시 시도해주세요.",
+        },
+      ]);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -61,6 +79,8 @@ const ChatPage = () => {
                 role={message.role}
                 text={message.text}
                 action={message.action}
+                recommendedProducts={message.recommendedProducts}
+                sessionId={sessionId}
               />
             ))}
             <div ref={listEndRef} />
@@ -68,7 +88,7 @@ const ChatPage = () => {
         )}
       </Body>
 
-      <ChatInputBar onSubmit={handleSend} />
+      <ChatInputBar onSubmit={handleSend} disabled={isSending} />
     </PageWrapper>
   );
 };
