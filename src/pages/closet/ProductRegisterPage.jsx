@@ -2,8 +2,8 @@ import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import Button from "@components/common/Button";
 import CompleteOverlay from "@components/common/CompleteOverlay";
-import ReceiptUploader from "@components/closet/ReceiptUploader";
-import ProductInfoForm from "@components/closet/ProductInfoForm";
+import ReceiptUploader from "@components/closet/register/ReceiptUploader";
+import ProductInfoForm from "@components/closet/register/ProductInfoForm";
 import useProductRegisterForm from "@hooks/useProductRegisterForm";
 import { PRODUCT_REGISTER_CATEGORIES } from "@mocks/closetMockData";
 
