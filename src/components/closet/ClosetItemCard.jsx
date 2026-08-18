@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import moreWhiteIcon from "@assets/icons/closet/more-white.svg";
 import moreGrayIcon from "@assets/icons/closet/more-gray.svg";
@@ -12,12 +13,13 @@ const ClosetItemCard = ({
   onEdit,
 }) => {
   const handleToggleMenu = (event) => {
+    event.preventDefault();
     event.stopPropagation();
     onToggleMenu();
   };
 
   return (
-    <Card>
+    <Card to={`/closet/${item.id}`}>
       <ImageWrap>
         <Image src={item.image} alt={item.name} />
         <Gradient />
@@ -57,8 +59,9 @@ const ClosetItemCard = ({
 
 export default ClosetItemCard;
 
-const Card = styled.article`
+const Card = styled(Link)`
   position: relative;
+  display: block;
   width: 100%;
 `;
 

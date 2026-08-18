@@ -3,7 +3,11 @@ import deleteIcon from "@assets/icons/closet/delete.svg";
 import editIcon from "@assets/icons/closet/edit.svg";
 
 const ClosetActionMenu = ({ onDelete, onEdit }) => (
-  <Menu role="menu" onPointerDown={(event) => event.stopPropagation()}>
+  <Menu
+    role="menu"
+    onPointerDown={(event) => event.stopPropagation()}
+    onClick={(event) => event.stopPropagation()}
+  >
     <MenuItem type="button" role="menuitem" onClick={onDelete}>
       <span>삭제하기</span>
       <Icon src={deleteIcon} alt="" />
