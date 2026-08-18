@@ -1,12 +1,34 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "@components/common/Button";
 import PageHeader from "@components/common/PageHeader";
 import FieldGroup from "@components/login/FieldGroup";
 import Label from "@components/login/Label";
 import Input from "@components/login/Input";
+import { login } from "@apis/auth";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setIsSubmitting(true);
+    try {
+      await login(email, password);
+      navigate("/"); // 로그인 후 이동할 경로로 수정
+    } catch {
+      setError("이메일 또는 비밀번호를 확인해주세요.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <PageWrapper>
       <PageHeader title="로그인" backTo="/" />
@@ -14,18 +36,32 @@ const LoginPage = () => {
       <Main>
         <SectionTitle>로그인</SectionTitle>
 
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <FieldGroup>
             <Label htmlFor="email">이메일</Label>
-            <Input id="email" type="email" />
+            <Input 
+              id="email" 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </FieldGroup>
 
           <FieldGroup>
             <Label htmlFor="password">비밀번호</Label>
-            <Input id="password" type="password" />
+            <Input 
+              id="password" 
+              type="password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </FieldGroup>
 
-          <SubmitButton type="submit">로그인 하기</SubmitButton>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+
+          <SubmitButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "로그인 중..." : "로그인 하기"}
+          </SubmitButton>
         </Form>
 
         <FooterText>
@@ -76,4 +112,10 @@ const FooterLink = styled(Link)`
   color: var(--color-mediumgray);
   font-style: normal;
   text-decoration: underline;
+`;
+
+const ErrorMessage = styled.p`
+  margin: -1rem 0 0;
+  color: #ef4444;
+  font-size: 1.3rem;
 `;
