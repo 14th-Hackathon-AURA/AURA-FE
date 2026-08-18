@@ -36,6 +36,11 @@ const PasswordField = styled.div`
   ${Input} {
     padding-right: 4rem;
   }
+
+  ${Input}::-ms-reveal,
+  ${Input}::-ms-clear {
+    display: none;
+  }
 `;
 
 const ToggleButton = styled.button`
