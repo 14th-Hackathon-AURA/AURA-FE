@@ -28,6 +28,7 @@ export const MOCK_CLOSET_PRODUCTS = [
     serialNumber: "등록됨",
     diagnosisDate: "2026.07.22",
     verified: true,
+    material: "가죽",
     image: backpackImage,
   },
   {
@@ -42,6 +43,7 @@ export const MOCK_CLOSET_PRODUCTS = [
     serialNumber: "등록됨",
     diagnosisDate: "2026.07.22",
     verified: true,
+    material: "캔버스",
     image: hoboImage,
   },
 ];
