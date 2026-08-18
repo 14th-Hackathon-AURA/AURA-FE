@@ -7,7 +7,6 @@ import ProductTagModal from "@components/community/ProductTagModal";
 import CompleteOverlay from "@components/common/CompleteOverlay";
 import tagIcon from "@assets/icons/community/tag.svg";
 import usePostWriteForm from "@hooks/community/usePostWriteForm";
-import { MOCK_CLOSET_ITEMS } from "@hooks/community/communityMockData";
 
 const PostWritePage = () => {
   const {
@@ -15,6 +14,7 @@ const PostWritePage = () => {
     setTitle,
     content,
     setContent,
+    contentInputRef,
     imagePreviewUrl,
     handleImageChange,
     taggedProduct,
@@ -25,7 +25,10 @@ const PostWritePage = () => {
     confirmTag,
     titleInputRef,
     isSubmitted,
+    isSubmitting,
+    errorMessage,
     handleSubmit,
+    closetItems,
   } = usePostWriteForm();
 
   return (
@@ -40,6 +43,7 @@ const PostWritePage = () => {
           placeholder="제목을 작성해주세요"
         />
         <ContentInput
+          ref={contentInputRef}
           value={content}
           onChange={(event) => setContent(event.target.value)}
           placeholder="내용을 작성해주세요"
@@ -79,7 +83,11 @@ const PostWritePage = () => {
           )}
         </TagSection>
 
-        <SubmitButton type="submit">게시물 올리기</SubmitButton>
+        {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
+
+        <SubmitButton type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "등록 중..." : "게시물 올리기"}
+        </SubmitButton>
 
         <Disclaimer>
           ⚠ 이 게시물에 포함된 관리·케어 경험은 개인적인 사용 경험입니다. 공식 관리 지침이나 전문 수선
@@ -89,7 +97,7 @@ const PostWritePage = () => {
 
       {isTagModalOpen && (
         <ProductTagModal
-          items={MOCK_CLOSET_ITEMS}
+          items={closetItems}
           initialSelectedId={taggedProduct?.id ?? null}
           onCancel={closeTagModal}
           onConfirm={confirmTag}
@@ -223,6 +231,16 @@ const TagAddButton = styled.button`
 const SubmitButton = styled(Button)`
   width: 100%;
   font-size: 1.4rem;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+`;
+
+const ErrorText = styled.p`
+  margin: 0;
+  font-size: 1.2rem;
+  color: #e14b4b;
 `;
 
 const Disclaimer = styled.p`
