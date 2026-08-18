@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "@components/common/Button";
 import PageHeader from "@components/common/PageHeader";
@@ -6,8 +7,46 @@ import FieldGroup from "@components/login/FieldGroup";
 import Label from "@components/login/Label";
 import Input from "@components/login/Input";
 import PasswordInput from "@components/login/PasswordInput";
+import { signUp } from "@apis/auth";
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreeMarketing, setAgreeMarketing] = useState(false);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!agreeTerms) {
+      setError("서비스 이용약관에 동의해주세요.");
+      return;
+    }
+    if (password !== passwordConfirm) {
+      setError("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+
+    setIsSubmitting(true);
+    try {
+      await signUp(email, password);
+      navigate("/login", { state: { justSignedUp: true } });
+    } catch (err) {
+      const serverMessage = err.response?.data?.email?.[0]
+        || err.response?.data?.password?.[0]
+        || "회원가입에 실패했습니다. 다시 시도해주세요.";
+      setError(serverMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <PageWrapper>
       <PageHeader title="회원가입" backTo="/" />
@@ -18,10 +57,16 @@ const SignUpPage = () => {
           AURA에서 럭셔리 제품을 소개받고 관리해보세요
         </SectionDescription>
 
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <FieldGroup>
             <Label htmlFor="email">이메일</Label>
-            <Input id="email" type="email" />
+            <Input 
+              id="email" 
+              type="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </FieldGroup>
 
           <FieldGroup>
@@ -33,6 +78,9 @@ const SignUpPage = () => {
               id="password"
               hiddenLabel="비밀번호 표시"
               visibleLabel="비밀번호 숨김"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </FieldGroup>
 
@@ -42,12 +90,20 @@ const SignUpPage = () => {
               id="passwordConfirm"
               hiddenLabel="비밀번호 확인 표시"
               visibleLabel="비밀번호 확인 숨김"
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              required
             />
           </FieldGroup>
 
           <CheckboxGroup>
             <CheckboxRow>
-              <Checkbox id="agreeTerms" type="checkbox" />
+              <Checkbox 
+                id="agreeTerms" 
+                type="checkbox" 
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
+              />
               <CheckboxLabel htmlFor="agreeTerms">약관 동의</CheckboxLabel>
             </CheckboxRow>
             <CheckboxDescription>
@@ -57,15 +113,24 @@ const SignUpPage = () => {
 
           <CheckboxGroup>
             <CheckboxRow>
-              <Checkbox id="agreeMarketing" type="checkbox" />
+              <Checkbox 
+                id="agreeMarketing" 
+                type="checkbox"
+                checked={agreeMarketing}
+                onChange={(e) => setAgreeMarketing(e.target.checked)}
+              />
               <CheckboxLabel htmlFor="agreeMarketing">마케팅 수신</CheckboxLabel>
             </CheckboxRow>
             <CheckboxDescription>
               신제품 소식, 추천 정보, 특별 혜택 안내를 받겠습니다 (선택)
             </CheckboxDescription>
           </CheckboxGroup>
+          
+          {error && <ErrorText>{error}</ErrorText>}
 
-          <SubmitButton type="submit">계정 생성</SubmitButton>
+          <SubmitButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "생성 중..." : "계정 생성"}
+          </SubmitButton>
         </Form>
 
         <FooterText>
@@ -177,4 +242,10 @@ const FooterLink = styled(Link)`
   color: var(--color-mediumgray);
   font-style: normal;
   text-decoration: underline;
+`;
+
+const ErrorText = styled.p`
+  margin: 0;
+  color: #dc2626;
+  font-size: 1.3rem;
 `;
