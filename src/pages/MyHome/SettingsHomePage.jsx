@@ -5,9 +5,17 @@ import ProfileSummary from "@components/myhome/ProfileSummary";
 import MembershipCard from "@components/myhome/MembershipCard";
 import SettingsMenuItem from "@components/myhome/SettingsMenuItem";
 import useMemberProfile from "@hooks/useMemberProfile";
+import { useNavigate } from "react-router-dom";
 
 const SettingsHomePage = () => {
+  const navigate = useNavigate();
   const { nickname, joinedAt, avatarUrl, membership } = useMemberProfile();
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    navigate("/login");
+  };
 
   return (
     <PageWrapper>
@@ -31,7 +39,7 @@ const SettingsHomePage = () => {
           <SettingsMenuItem title="계정 삭제 요청" description="프로필·이력 삭제 안내" />
         </Section>
 
-        <LogoutButton type="button" $variant="outline">
+        <LogoutButton type="button" $variant="outline" onClick={handleLogout}>
           로그아웃
         </LogoutButton>
       </Main>
