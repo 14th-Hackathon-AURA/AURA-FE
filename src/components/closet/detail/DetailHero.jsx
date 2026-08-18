@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "@components/common/Button";
 
@@ -14,7 +15,9 @@ const DetailHero = ({ product }) => (
       <Name>{product.name}</Name>
       <Price>{formatPrice(product.price)}</Price>
 
-      <CareButton type="button">케어 가이드 보기</CareButton>
+      <CareButton as={Link} to={`/closet/${product.id}/care`}>
+        케어 가이드 보기
+      </CareButton>
     </Meta>
   </Section>
 );

@@ -13,6 +13,7 @@ import CommunityProvider from "@hooks/community/CommunityProvider";
 import ClosetPage from "@pages/closet/ClosetPage";
 import ProductRegisterPage from "@pages/closet/ProductRegisterPage";
 import ProductDetailPage from "@pages/closet/ProductDetailPage";
+import CareGuidePage from "@pages/closet/CareGuidePage";
 
 const router = createBrowserRouter([
   {
@@ -76,6 +77,10 @@ const router = createBrowserRouter([
       {
         path: "/closet/:productId",
         element: <ProductDetailPage />,
+      },
+      {
+        path: "/closet/:productId/care",
+        element: <CareGuidePage />,
       },
     ],
   },
