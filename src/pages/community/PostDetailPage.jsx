@@ -10,14 +10,14 @@ import useCommunityStore from "@hooks/community/useCommunityStore";
 
 const PostDetailPage = () => {
   const { postId } = useParams();
-  const { getPostById, toggleLike, addComment } = useCommunityStore();
+  const { getPostById, toggleLike, addComment, isLoading } = useCommunityStore();
   const post = getPostById(postId);
 
   if (!post) {
     return (
       <PageWrapper>
         <PageHeader title="게시물 상세" backTo="/community" />
-        <EmptyState>게시물을 찾을 수 없어요</EmptyState>
+        <EmptyState>{isLoading ? "불러오는 중..." : "게시물을 찾을 수 없어요"}</EmptyState>
       </PageWrapper>
     );
   }
@@ -57,10 +57,7 @@ const PostDetailPage = () => {
           {post.taggedProduct && (
             <TagSection>
               <TagLabel>태그된 제품</TagLabel>
-              <ProductTagRow
-                name={post.taggedProduct.name}
-                sub={`${post.taggedProduct.category} · ${post.taggedProduct.registeredLabel}`}
-              />
+              <ProductTagRow name={post.taggedProduct.name} sub={post.taggedProduct.brand} />
             </TagSection>
           )}
         </Section>
@@ -85,7 +82,7 @@ const PostDetailPage = () => {
         </Section>
       </Main>
 
-      <CommentInput onSubmit={(text) => addComment(post.id, text)} />
+      <CommentInput onSubmit={(text) => addComment(post.id, text).catch(() => {})} />
     </PageWrapper>
   );
 };
