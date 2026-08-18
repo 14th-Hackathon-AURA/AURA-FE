@@ -14,6 +14,7 @@ import ClosetPage from "@pages/closet/ClosetPage";
 import ProductRegisterPage from "@pages/closet/ProductRegisterPage";
 import ProductDetailPage from "@pages/closet/ProductDetailPage";
 import CareGuidePage from "@pages/closet/CareGuidePage";
+import ChatPage from "@pages/chatbot/ChatPage";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
       {
         path: "/mypage/edit-profile",
         element: <EditProfilePage />,
+      },
+      {
+        path: "/chatbot",
+        element: <ChatPage />,
       },
       {
         path: "/community",

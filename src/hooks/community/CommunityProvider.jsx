@@ -1,67 +1,114 @@
-import { useCallback, useMemo, useState } from "react";
-import useMemberProfile from "@hooks/useMemberProfile";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { createComment, createPost, getMyPostLikes, getPosts, likePost, unlikePost } from "@apis/community";
 import CommunityContext from "./CommunityContext";
-import { createMockPosts } from "./communityMockData";
+import { mapComment, mapPost } from "./communityMappers";
 
 const CommunityProvider = ({ children }) => {
-  const profile = useMemberProfile();
-  const [posts, setPosts] = useState(createMockPosts);
+  const [posts, setPosts] = useState([]);
+  const [likeIdByPostId, setLikeIdByPostId] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const toggleLike = useCallback((postId) => {
+  useEffect(() => {
+    let mounted = true;
+
+    Promise.all([getPosts(), getMyPostLikes()])
+      .then(([postsData, likesData]) => {
+        if (!mounted) return;
+        setPosts(postsData.map(mapPost));
+        const likeMap = {};
+        likesData.forEach((like) => {
+          likeMap[like.post] = like.id;
+        });
+        setLikeIdByPostId(likeMap);
+      })
+      .finally(() => {
+        if (mounted) setIsLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const toggleLike = useCallback(
+    async (postId) => {
+      const existingLikeId = likeIdByPostId[postId];
+
+      if (existingLikeId) {
+        setPosts((prev) =>
+          prev.map((post) =>
+            post.id === postId ? { ...post, liked: false, likeCount: post.likeCount - 1 } : post,
+          ),
+        );
+        setLikeIdByPostId((prev) => {
+          const next = { ...prev };
+          delete next[postId];
+          return next;
+        });
+        try {
+          await unlikePost(existingLikeId);
+        } catch {
+          setPosts((prev) =>
+            prev.map((post) =>
+              post.id === postId ? { ...post, liked: true, likeCount: post.likeCount + 1 } : post,
+            ),
+          );
+          setLikeIdByPostId((prev) => ({ ...prev, [postId]: existingLikeId }));
+        }
+        return;
+      }
+
+      setPosts((prev) =>
+        prev.map((post) =>
+          post.id === postId ? { ...post, liked: true, likeCount: post.likeCount + 1 } : post,
+        ),
+      );
+      try {
+        const like = await likePost(postId);
+        setLikeIdByPostId((prev) => ({ ...prev, [postId]: like.id }));
+      } catch {
+        setPosts((prev) =>
+          prev.map((post) =>
+            post.id === postId ? { ...post, liked: false, likeCount: post.likeCount - 1 } : post,
+          ),
+        );
+      }
+    },
+    [likeIdByPostId],
+  );
+
+  const addComment = useCallback(async (postId, content) => {
+    const comment = await createComment(postId, content);
     setPosts((prev) =>
       prev.map((post) =>
         post.id === postId
-          ? { ...post, liked: !post.liked, likeCount: post.likeCount + (post.liked ? -1 : 1) }
+          ? {
+              ...post,
+              commentCount: post.commentCount + 1,
+              comments: [...post.comments, mapComment(comment)],
+            }
           : post,
       ),
     );
   }, []);
 
-  const addComment = useCallback(
-    (postId, content) => {
-      setPosts((prev) =>
-        prev.map((post) =>
-          post.id === postId
-            ? {
-                ...post,
-                commentCount: post.commentCount + 1,
-                comments: [
-                  ...post.comments,
-                  { id: `comment-${Date.now()}`, nickname: profile.nickname, content },
-                ],
-              }
-            : post,
-        ),
-      );
-    },
-    [profile.nickname],
-  );
+  const addPost = useCallback(async ({ title, content, imageFile, taggedProductId }) => {
+    const created = await createPost({
+      title,
+      body: content,
+      image: imageFile,
+      taggedProductIds: taggedProductId ? [taggedProductId] : [],
+    });
+    const newPost = mapPost(created);
+    setPosts((prev) => [newPost, ...prev]);
+    return newPost.id;
+  }, []);
 
-  const addPost = useCallback(
-    ({ title, content, images, taggedProduct }) => {
-      const newPost = {
-        id: `post-${Date.now()}`,
-        author: { nickname: profile.nickname, grade: profile.membership.grade },
-        itemName: taggedProduct?.name ?? "",
-        timeLabel: "방금 전",
-        createdLabel: "방금 전",
-        title,
-        content,
-        images: images ?? [],
-        taggedProduct: taggedProduct ?? null,
-        likeCount: 0,
-        liked: false,
-        commentCount: 0,
-        comments: [],
-      };
-      setPosts((prev) => [newPost, ...prev]);
-      return newPost.id;
-    },
-    [profile.nickname, profile.membership.grade],
+  const getPostById = useCallback(
+    (postId) => posts.find((post) => String(post.id) === String(postId)),
+    [posts],
   );
-
-  const getPostById = useCallback((postId) => posts.find((post) => post.id === postId), [posts]);
 
   const filteredPosts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -82,8 +129,9 @@ const CommunityProvider = ({ children }) => {
       addComment,
       addPost,
       getPostById,
+      isLoading,
     }),
-    [posts, filteredPosts, searchQuery, toggleLike, addComment, addPost, getPostById],
+    [posts, filteredPosts, searchQuery, toggleLike, addComment, addPost, getPostById, isLoading],
   );
 
   return <CommunityContext.Provider value={value}>{children}</CommunityContext.Provider>;

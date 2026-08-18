@@ -9,7 +9,7 @@ const useMultiSelect = (initialValues = []) => {
     );
   }, []);
 
-  return [selected, toggle];
+  return [selected, toggle, setSelected];
 };
 
 export default useMultiSelect;

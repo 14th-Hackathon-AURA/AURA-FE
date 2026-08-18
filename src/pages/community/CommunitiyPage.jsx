@@ -7,7 +7,7 @@ import PostCard from "@components/community/PostCard";
 import useCommunityStore from "@hooks/community/useCommunityStore";
 
 const CommunityPage = () => {
-  const { filteredPosts, searchQuery, setSearchQuery } = useCommunityStore();
+  const { filteredPosts, searchQuery, setSearchQuery, isLoading } = useCommunityStore();
 
   return (
     <PageWrapper>
@@ -34,9 +34,13 @@ const CommunityPage = () => {
         </Body>
 
         <PostList>
-          {filteredPosts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
+          {isLoading ? (
+            <EmptyState>불러오는 중...</EmptyState>
+          ) : filteredPosts.length === 0 ? (
+            <EmptyState>게시물이 없어요</EmptyState>
+          ) : (
+            filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
+          )}
         </PostList>
       </Main>
 
@@ -118,4 +122,12 @@ const SectionTitle = styled.h2`
 const PostList = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const EmptyState = styled.p`
+  margin: 0;
+  padding: 4rem 2.4rem;
+  text-align: center;
+  font-size: 1.4rem;
+  color: var(--color-mediumgray);
 `;

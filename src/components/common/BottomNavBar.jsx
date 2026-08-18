@@ -97,10 +97,27 @@ const TabLink = styled(Link)`
   }
 `;
 
-const TabIcon = styled.img`
+const ActiveIndicator = styled.span`
+  position: absolute;
+  top: -1.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+`;
+
+const TabIcon = styled.span`
+  flex-shrink: 0;
   width: 2rem;
   height: 2rem;
-  object-fit: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
 `;
 
 const TabLabel = styled.span`
