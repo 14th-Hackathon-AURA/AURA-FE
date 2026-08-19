@@ -1,40 +1,54 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
-import Button from "@components/common/Button";
 import ChatBubble from "@components/chatbot/ChatBubble";
 import ChatInputBar from "@components/chatbot/ChatInputBar";
 import useMemberProfile from "@hooks/useMemberProfile";
-
-// 추후 경로 수정 예정
-const VISIT_CARD_LIST_PATH = "/chatbot/visit-cards";
+import { sendChatMessage } from "@apis/chat";
 
 const ChatPage = () => {
   const { nickname } = useMemberProfile();
   const [messages, setMessages] = useState([]);
+  const [sessionId, setSessionId] = useState(null);
+  const [isSending, setIsSending] = useState(false);
   const listEndRef = useRef(null);
 
   useEffect(() => {
     listEndRef.current?.scrollIntoView({ block: "end" });
   }, [messages]);
 
-  const handleSend = (text) => {
+  const handleSend = async (text) => {
     const userMessage = { id: Date.now(), role: "user", text };
     setMessages((prev) => [...prev, userMessage]);
+    setIsSending(true);
 
-    // 추후 백엔드 API 연결 후 수정 예정
-    window.setTimeout(() => {
+    try {
+      const data = await sendChatMessage({ sessionId, message: text });
+
+      if (data.session_id) setSessionId(data.session_id);
+
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
           role: "ai",
-          text: "카드 형식으로 정리를 완료했어요.\n다음을 눌러 확인해보세요.",
-          action: { label: "방문 카드 확인", to: VISIT_CARD_LIST_PATH },
+          text: data.answer,
+          recommendedProducts: data.recommended_products || [],
         },
       ]);
-    }, 600);
+    } catch (error) {
+      const detail = error.response?.data?.detail;
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: "ai",
+          text: detail || "죄송해요, 답변을 가져오지 못했어요. 잠시 후 다시 시도해주세요.",
+        },
+      ]);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -49,9 +63,6 @@ const ChatPage = () => {
               <br />
               무엇이든 물어보세요
             </Greeting>
-            <VisitListButton as={Link} to={VISIT_CARD_LIST_PATH}>
-              방문 카드 목록
-            </VisitListButton>
           </EmptyState>
         ) : (
           <MessageList>
@@ -61,6 +72,8 @@ const ChatPage = () => {
                 role={message.role}
                 text={message.text}
                 action={message.action}
+                recommendedProducts={message.recommendedProducts}
+                sessionId={sessionId}
               />
             ))}
             <div ref={listEndRef} />
@@ -68,7 +81,7 @@ const ChatPage = () => {
         )}
       </Body>
 
-      <ChatInputBar onSubmit={handleSend} />
+      <ChatInputBar onSubmit={handleSend} disabled={isSending} />
     </PageWrapper>
   );
 };
@@ -107,16 +120,6 @@ const Greeting = styled.p`
   line-height: 1.5;
   text-align: center;
   color: var(--color-black);
-`;
-
-const VisitListButton = styled(Button)`
-  align-self: center;
-  width: 17rem;
-  padding: 1.2rem 2.4rem;
-  border-radius: 0.2rem;
-  font-size: 1.2rem;
-  color: var(--color-ivory);
-  align-items: center;
 `;
 
 const MessageList = styled.div`
