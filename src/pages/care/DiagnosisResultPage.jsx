@@ -5,7 +5,6 @@ import Button from "@components/common/Button";
 import locationMarker from "@assets/icons/care/location-marker.svg";
 import warnIcon from "@assets/icons/care/warn.svg";
 import { MOCK_DIAGNOSIS_RESULT } from "@mocks/diagnosisHistoryMockData";
-import { OFFICIAL_AS_CENTER_URL } from "@mocks/careGuideMockData";
 
 const STATUS_MAP = {
   warn: { label: "주의", color: "var(--color-warn)" },
@@ -81,12 +80,7 @@ const DiagnosisResultPage = () => {
           </SubText>
         </SubSection>
 
-        <AsButton
-          as="a"
-          href={OFFICIAL_AS_CENTER_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <AsButton type="button" onClick={() => navigate("/care/reservation")}>
           공식 AS 예약하기
         </AsButton>
       </Main>

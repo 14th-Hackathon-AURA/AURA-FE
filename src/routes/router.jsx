@@ -18,6 +18,7 @@ import ChatPage from "@pages/chatbot/ChatPage";
 import CarePage from "@pages/care/CarePage";
 import DiagnosisHistoryPage from "@pages/care/DiagnosisHistoryPage";
 import DiagnosisResultPage from "@pages/care/DiagnosisResultPage";
+import ReservationPage from "@pages/care/ReservationPage";
 
 const router = createBrowserRouter([
   {
@@ -101,6 +102,10 @@ const router = createBrowserRouter([
       {
         path: "/care/result",
         element: <DiagnosisResultPage />,
+      },
+      {
+        path: "/care/reservation",
+        element: <ReservationPage />,
       },
     ],
   },
