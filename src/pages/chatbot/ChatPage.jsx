@@ -1,15 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
-import Button from "@components/common/Button";
 import ChatBubble from "@components/chatbot/ChatBubble";
 import ChatInputBar from "@components/chatbot/ChatInputBar";
 import useMemberProfile from "@hooks/useMemberProfile";
 import { sendChatMessage } from "@apis/chat";
-
-// 추후 경로 수정 예정
-const VISIT_CARD_LIST_PATH = "/chatbot/visit-cards";
 
 const ChatPage = () => {
   const { nickname } = useMemberProfile();
@@ -37,17 +32,18 @@ const ChatPage = () => {
         {
           id: Date.now() + 1,
           role: "ai",
-          text: data.reply, // 실제 응답 필드명 확인 후 필요시 수정
+          text: data.answer,
           recommendedProducts: data.recommended_products || [],
         },
       ]);
-    } catch {
+    } catch (error) {
+      const detail = error.response?.data?.detail;
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
           role: "ai",
-          text: "죄송해요, 답변을 가져오지 못했어요. 잠시 후 다시 시도해주세요.",
+          text: detail || "죄송해요, 답변을 가져오지 못했어요. 잠시 후 다시 시도해주세요.",
         },
       ]);
     } finally {
@@ -67,9 +63,6 @@ const ChatPage = () => {
               <br />
               무엇이든 물어보세요
             </Greeting>
-            <VisitListButton as={Link} to={VISIT_CARD_LIST_PATH}>
-              방문 카드 목록
-            </VisitListButton>
           </EmptyState>
         ) : (
           <MessageList>
@@ -127,16 +120,6 @@ const Greeting = styled.p`
   line-height: 1.5;
   text-align: center;
   color: var(--color-black);
-`;
-
-const VisitListButton = styled(Button)`
-  align-self: center;
-  width: 17rem;
-  padding: 1.2rem 2.4rem;
-  border-radius: 0.2rem;
-  font-size: 1.2rem;
-  color: var(--color-ivory);
-  align-items: center;
 `;
 
 const MessageList = styled.div`
