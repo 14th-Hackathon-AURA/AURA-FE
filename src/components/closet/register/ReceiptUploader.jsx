@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import cameraPlusIcon from "@assets/icons/closet/camera-plus.svg";
-import UploadActionMenu from "./UploadActionMenu";
+import UploadActionMenu from "@components/closet/UploadActionMenu";
 
 const ReceiptUploader = ({ previewUrl, onChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
