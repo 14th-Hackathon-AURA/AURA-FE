@@ -49,3 +49,16 @@ export const MOCK_DIAGNOSIS_HISTORY = [
     status: "danger",
   },
 ];
+
+export const MOCK_DIAGNOSIS_RESULT = {
+  productName: "디스코 모노그램 스카프",
+  status: "warn",
+  image: dummyBag3,
+  damageCount: 2,
+  markers: [
+    { id: "marker-1", top: "60%", left: "30%" },
+    { id: "marker-2", top: "40%", left: "70%" },
+  ],
+  damageStatus: "가장 자리 미세 손상, 얼룩 오염",
+  careSuggestion: "클리닝과 보호제 사용을 통한 셀프 케어 권장",
+};
