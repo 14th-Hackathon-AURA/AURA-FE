@@ -15,6 +15,7 @@ import ProductRegisterPage from "@pages/closet/ProductRegisterPage";
 import ProductDetailPage from "@pages/closet/ProductDetailPage";
 import CareGuidePage from "@pages/closet/CareGuidePage";
 import ChatPage from "@pages/chatbot/ChatPage";
+import CarePage from "@pages/care/CarePage";
 
 const router = createBrowserRouter([
   {
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
       {
         path: "/closet/:productId/care",
         element: <CareGuidePage />,
+      },
+      {
+        path: "/care",
+        element: <CarePage />,
       },
     ],
   },
