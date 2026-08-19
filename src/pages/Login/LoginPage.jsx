@@ -6,6 +6,7 @@ import PageHeader from "@components/common/PageHeader";
 import FieldGroup from "@components/login/FieldGroup";
 import Label from "@components/login/Label";
 import Input from "@components/login/Input";
+import PasswordInput from "@components/login/PasswordInput";
 import { login } from "@apis/auth";
 
 const LoginPage = () => {
@@ -21,7 +22,7 @@ const LoginPage = () => {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      navigate("/"); // 로그인 후 이동할 경로로 수정
+      navigate("/closet"); // 로그인 후 이동할 경로로 수정
     } catch {
       setError("이메일 또는 비밀번호를 확인해주세요.");
     } finally {
@@ -49,9 +50,10 @@ const LoginPage = () => {
 
           <FieldGroup>
             <Label htmlFor="password">비밀번호</Label>
-            <Input 
-              id="password" 
-              type="password" 
+            <PasswordInput
+              id="password"
+              hiddenLabel="비밀번호 표시"
+              visibleLabel="비밀번호 숨김"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
