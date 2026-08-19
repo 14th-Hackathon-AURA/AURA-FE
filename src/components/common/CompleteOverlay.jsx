@@ -1,8 +1,10 @@
 import styled from "styled-components";
 
-const CompleteOverlay = ({ message }) => (
-  <Overlay>
-    <Toast>{message}</Toast>
+const CompleteOverlay = ({ message, multiline = false, onClose }) => (
+  <Overlay onClick={onClose}>
+    <Toast $multiline={multiline} onClick={(event) => event.stopPropagation()}>
+      {message}
+    </Toast>
   </Overlay>
 );
 
@@ -26,5 +28,6 @@ const Toast = styled.p`
   line-height: 1.5;
   color: var(--color-black);
   text-align: center;
-  white-space: nowrap;
+  white-space: ${({ $multiline }) => ($multiline ? "pre-line" : "nowrap")};
+  max-width: ${({ $multiline }) => ($multiline ? "28rem" : "none")};
 `;
