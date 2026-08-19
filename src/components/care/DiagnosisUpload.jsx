@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "@components/common/Button";
 import UploadActionMenu from "@components/closet/UploadActionMenu";
@@ -48,7 +49,7 @@ const DiagnosisUpload = ({
     <Section>
       <TitleRow>
         <Title>AI 상태 진단</Title>
-        <HistoryButton type="button">지난 기록 보기</HistoryButton>
+        <HistoryButton to="/care/history">지난 기록 보기</HistoryButton>
       </TitleRow>
 
       <Description>
@@ -68,7 +69,8 @@ const DiagnosisUpload = ({
             <Placeholder>
               <PlusIcon src={cameraPlusIcon} alt="" />
               <PlaceholderText>
-                진단할 제품의 사진을 업로드 해주세요
+                진단할 제품의 사진을 <br />
+                업로드 해주세요
               </PlaceholderText>
             </Placeholder>
           )}
@@ -125,7 +127,7 @@ const Title = styled.h2`
   color: var(--color-black);
 `;
 
-const HistoryButton = styled.button`
+const HistoryButton = styled(Link)`
   flex-shrink: 0;
   font-size: 1.4rem;
   font-weight: 400;
