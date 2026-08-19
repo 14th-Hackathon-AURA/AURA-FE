@@ -21,7 +21,7 @@ const LoginPage = () => {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      navigate("/"); // 로그인 후 이동할 경로로 수정
+      navigate("/closet"); // 로그인 후 이동할 경로로 수정
     } catch {
       setError("이메일 또는 비밀번호를 확인해주세요.");
     } finally {
