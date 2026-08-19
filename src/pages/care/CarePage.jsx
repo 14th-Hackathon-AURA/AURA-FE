@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import BottomNavBar from "@components/common/BottomNavBar";
 import CompleteOverlay from "@components/common/CompleteOverlay";
@@ -8,6 +9,7 @@ import DiagnosisInstructions from "@components/care/DiagnosisInstructions";
 const DIAGNOSIS_DURATION = 2000;
 
 const CarePage = () => {
+  const navigate = useNavigate();
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isDiagnosing, setIsDiagnosing] = useState(false);
 
@@ -20,9 +22,11 @@ const CarePage = () => {
   useEffect(() => {
     if (!isDiagnosing) return undefined;
 
-    const timer = setTimeout(() => setIsDiagnosing(false), DIAGNOSIS_DURATION);
+    const timer = setTimeout(() => {
+      navigate("/care/result");
+    }, DIAGNOSIS_DURATION);
     return () => clearTimeout(timer);
-  }, [isDiagnosing]);
+  }, [isDiagnosing, navigate]);
 
   const handleImageChange = useCallback((file) => {
     if (!file) return;
