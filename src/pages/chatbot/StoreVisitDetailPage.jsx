@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import Button from "@components/common/Button";
@@ -9,6 +9,7 @@ import {
 } from "@mocks/storeVisitMockData";
 
 const StoreVisitDetailPage = () => {
+  const navigate = useNavigate();
   const { cardId } = useParams();
   const { nickname } = useMemberProfile();
   const card = getStoreVisitCardById(cardId);
@@ -57,7 +58,12 @@ const StoreVisitDetailPage = () => {
           </NeedsBlock>
         </SummaryCard>
 
-        <ReserveButton type="button">매장 예약하기</ReserveButton>
+        <ReserveButton
+          type="button"
+          onClick={() => navigate("/chatbot/store-list", { state: { cardId } })}
+        >
+          매장 예약하기
+        </ReserveButton>
       </Main>
     </PageWrapper>
   );
