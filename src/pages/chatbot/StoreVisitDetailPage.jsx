@@ -1,20 +1,59 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import Button from "@components/common/Button";
 import useMemberProfile from "@hooks/useMemberProfile";
-import {
-  formatVisitNeedsSummary,
-  getStoreVisitCardById,
-} from "@mocks/storeVisitMockData";
+import { getVisitCard } from "@apis/visitCards";
+import { formatVisitNeedsSummary, mapVisitCard } from "@utils/visitCardMappers";
 
 const StoreVisitDetailPage = () => {
   const navigate = useNavigate();
   const { cardId } = useParams();
   const { nickname } = useMemberProfile();
-  const card = getStoreVisitCardById(cardId);
+  const [requestId, setRequestId] = useState(cardId);
+  const [card, setCard] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  if (!card) {
+  if (cardId !== requestId) {
+    setRequestId(cardId);
+    setCard(null);
+    setIsLoading(true);
+    setNotFound(false);
+  }
+
+  useEffect(() => {
+    let mounted = true;
+
+    getVisitCard(cardId)
+      .then((data) => {
+        if (!mounted) return;
+        setCard(mapVisitCard(data));
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setNotFound(true);
+      })
+      .finally(() => {
+        if (mounted) setIsLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [cardId]);
+
+  if (isLoading) {
+    return (
+      <PageWrapper>
+        <PageHeader title="AI 방문 카드 상세" backTo="/chatbot/store-visit" />
+        <EmptyState>불러오는 중...</EmptyState>
+      </PageWrapper>
+    );
+  }
+
+  if (notFound || !card) {
     return (
       <PageWrapper>
         <PageHeader title="AI 방문 카드 상세" backTo="/chatbot/store-visit" />
@@ -39,22 +78,28 @@ const StoreVisitDetailPage = () => {
 
         <SummaryCard>
           <ProductBlock>
-            <ProductImage src={card.image} alt={card.name} />
+            {card.image ? (
+              <ProductImage src={card.image} alt={card.name} />
+            ) : (
+              <ProductImageFallback aria-hidden="true" />
+            )}
             <ProductMeta>
               <ProductLabel>제품명</ProductLabel>
               <ProductName>{card.name}</ProductName>
-              <ProductPrice>{card.price}</ProductPrice>
+              {card.price ? <ProductPrice>{card.price}</ProductPrice> : null}
             </ProductMeta>
           </ProductBlock>
 
           <NeedsBlock>
             <NeedsTitle>{displayName}님의 니즈를 정리했어요</NeedsTitle>
-            <NeedsText>{needsSummary}</NeedsText>
-            <TagList>
-              {card.tags.map((tag) => (
-                <Tag key={tag}>{tag}</Tag>
-              ))}
-            </TagList>
+            <NeedsText>{needsSummary || "상담 내역이 아직 없어요."}</NeedsText>
+            {card.tags.length > 0 ? (
+              <TagList>
+                {card.tags.map((tag) => (
+                  <Tag key={tag}>{tag}</Tag>
+                ))}
+              </TagList>
+            ) : null}
           </NeedsBlock>
         </SummaryCard>
 
@@ -120,6 +165,14 @@ const ProductImage = styled.img`
   background: #e5e5e5;
 `;
 
+const ProductImageFallback = styled.div`
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 0.4rem;
+  background: #e5e5e5;
+`;
+
 const ProductMeta = styled.div`
   display: flex;
   flex-direction: column;
@@ -170,6 +223,7 @@ const NeedsText = styled.p`
   font-weight: 400;
   line-height: 1.5;
   color: var(--color-white);
+  white-space: pre-line;
 `;
 
 const TagList = styled.div`

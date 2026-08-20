@@ -52,11 +52,13 @@ const StoreVisitCard = ({ card, isMenuOpen, onToggleMenu, onDelete }) => (
       </Info>
     </CardTop>
 
-    <TagList>
-      {card.tags.map((tag) => (
-        <Tag key={tag}>{tag}</Tag>
-      ))}
-    </TagList>
+    {card.tags?.length > 0 ? (
+      <TagList>
+        {card.tags.map((tag) => (
+          <Tag key={tag}>{tag}</Tag>
+        ))}
+      </TagList>
+    ) : null}
   </Card>
 );
 
