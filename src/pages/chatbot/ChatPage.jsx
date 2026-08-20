@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import ChatBubble from "@components/chatbot/ChatBubble";
@@ -8,6 +9,7 @@ import useMemberProfile from "@hooks/useMemberProfile";
 import { sendChatMessage } from "@apis/chat";
 
 const ChatPage = () => {
+  const navigate = useNavigate();
   const { nickname } = useMemberProfile();
   const [messages, setMessages] = useState([]);
   const [sessionId, setSessionId] = useState(null);
@@ -66,7 +68,12 @@ const ChatPage = () => {
               <br />
               무엇이든 물어보세요
             </Greeting>
-            <VisitCardButton type="button">방문 카드 목록</VisitCardButton>
+            <VisitCardButton
+              type="button"
+              onClick={() => navigate("/chatbot/store-visit")}
+            >
+              방문 카드 목록
+            </VisitCardButton>
           </EmptyState>
         ) : (
           <MessageList>
