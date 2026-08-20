@@ -4,50 +4,11 @@ import PageHeader from "@components/common/PageHeader";
 import CompleteOverlay from "@components/common/CompleteOverlay";
 import VisitCardSearchBar from "@components/chatbot/VisitCardSearchBar";
 import StoreVisitCard from "@components/chatbot/StoreVisitCard";
-import dummyBag1 from "@assets/images/closet/dummy-bag-1.png";
-import dummyBag2 from "@assets/images/closet/dummy-bag-2.png";
-
-const INITIAL_VISIT_CARDS = [
-  {
-    id: 1,
-    name: "디스코 모노그램 스카프",
-    price: "₩ 430,000",
-    image: dummyBag1,
-    tags: ["#예산범위", "#선호색상", "#사용상황"],
-  },
-  {
-    id: 2,
-    name: "디스코 모노그램 스카프",
-    price: "₩ 430,000",
-    image: dummyBag2,
-    tags: ["#예산범위", "#선호색상", "#사용상황"],
-  },
-  {
-    id: 3,
-    name: "디스코 모노그램 스카프",
-    price: "₩ 430,000",
-    image: dummyBag1,
-    tags: ["#예산범위", "#선호색상", "#사용상황"],
-  },
-  {
-    id: 4,
-    name: "디스코 모노그램 스카프",
-    price: "₩ 430,000",
-    image: dummyBag2,
-    tags: ["#예산범위", "#선호색상", "#사용상황"],
-  },
-  {
-    id: 5,
-    name: "디스코 모노그램 스카프",
-    price: "₩ 430,000",
-    image: dummyBag1,
-    tags: ["#예산범위", "#선호색상", "#사용상황"],
-  },
-];
+import { MOCK_STORE_VISIT_CARDS } from "@mocks/storeVisitMockData";
 
 const StoreVisitPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [cards, setCards] = useState(INITIAL_VISIT_CARDS);
+  const [cards, setCards] = useState(MOCK_STORE_VISIT_CARDS);
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [showToast, setShowToast] = useState(false);
 
