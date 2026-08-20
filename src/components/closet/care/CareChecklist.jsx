@@ -12,8 +12,8 @@ const CareChecklist = ({ title, items }) => (
     </Header>
 
     <List>
-      {items.map((item) => (
-        <Item key={item}>
+      {(items || []).map((item, index) => (
+        <Item key={`${index}-${item}`}>
           <Check src={checklistItemIcon} alt="" />
           <Text>{item}</Text>
         </Item>

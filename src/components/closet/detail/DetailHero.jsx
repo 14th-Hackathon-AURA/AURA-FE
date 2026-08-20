@@ -2,16 +2,23 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "@components/common/Button";
 
-const formatPrice = (price) => `₩ ${Number(price).toLocaleString("ko-KR")}`;
+const formatPrice = (price) => {
+  if (price == null || price === "") return "-";
+  return `₩ ${Number(price).toLocaleString("ko-KR")}`;
+};
 
 const DetailHero = ({ product }) => (
   <Section>
     <ImageBox>
-      <Image src={product.image} alt={product.name} />
+      {product.image ? (
+        <Image src={product.image} alt={product.name} />
+      ) : (
+        <ImagePlaceholder aria-hidden="true" />
+      )}
     </ImageBox>
 
     <Meta>
-      <Brand>{product.brand}</Brand>
+      <Brand>{product.brand || "-"}</Brand>
       <Name>{product.name}</Name>
       <Price>{formatPrice(product.price)}</Price>
 
@@ -42,6 +49,13 @@ const Image = styled.img`
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: contain;
+  background: var(--color-soft-gray);
+`;
+
+const ImagePlaceholder = styled.div`
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--color-soft-gray);
 `;
 
 const Meta = styled.div`

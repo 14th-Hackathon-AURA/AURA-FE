@@ -1,23 +1,92 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import Button from "@components/common/Button";
 import locationMarker from "@assets/icons/care/location-marker.svg";
 import warnIcon from "@assets/icons/care/warn.svg";
-import { MOCK_DIAGNOSIS_RESULT } from "@mocks/diagnosisHistoryMockData";
-
-const STATUS_MAP = {
-  warn: { label: "주의", color: "var(--color-warn)" },
-  safe: { label: "안전", color: "var(--color-safe)" },
-  danger: { label: "위험", color: "var(--color-danger)" },
-};
+import { mapDiagnosisResult } from "@utils/diagnosisMappers";
+import { getDiagnosis } from "@apis/diagnoses";
+import { getProduct } from "@apis/products";
+import { mapProduct } from "@utils/productMappers";
 
 const SPOTLIGHT_RADIUS = "2rem";
 
 const DiagnosisResultPage = () => {
   const navigate = useNavigate();
-  const result = MOCK_DIAGNOSIS_RESULT;
-  const status = STATUS_MAP[result.status];
+  const { diagnosisId } = useParams();
+  const [requestId, setRequestId] = useState(diagnosisId);
+  const [result, setResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(Boolean(diagnosisId));
+  const [errorMessage, setErrorMessage] = useState(
+    diagnosisId ? "" : "진단 결과를 찾을 수 없습니다.",
+  );
+
+  if (diagnosisId !== requestId) {
+    setRequestId(diagnosisId);
+    setResult(null);
+    setIsLoading(Boolean(diagnosisId));
+    setErrorMessage(diagnosisId ? "" : "진단 결과를 찾을 수 없습니다.");
+  }
+
+  useEffect(() => {
+    if (!diagnosisId) return undefined;
+
+    let mounted = true;
+
+    getDiagnosis(diagnosisId)
+      .then(async (data) => {
+        if (!mounted) return;
+
+        let mapped = mapDiagnosisResult(data);
+
+        if (mapped.productId) {
+          try {
+            const product = await getProduct(mapped.productId);
+            const productName = mapProduct(product).name?.trim();
+            if (productName) {
+              mapped = { ...mapped, productName };
+            }
+          } catch {
+            // 제품명은 '제품'으로 표시
+          }
+        }
+
+        if (mounted) setResult(mapped);
+      })
+      .catch(() => {
+        if (mounted) {
+          setErrorMessage("진단 결과를 불러오지 못했어요.");
+        }
+      })
+      .finally(() => {
+        if (mounted) setIsLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [diagnosisId]);
+
+  if (isLoading) {
+    return (
+      <PageWrapper>
+        <PageHeader title="진단 결과" backTo="/care" />
+        <EmptyState>불러오는 중...</EmptyState>
+      </PageWrapper>
+    );
+  }
+
+  if (errorMessage || !result) {
+    return (
+      <PageWrapper>
+        <PageHeader title="진단 결과" backTo="/care" />
+        <EmptyState>
+          {errorMessage || "진단 결과를 찾을 수 없습니다."}
+        </EmptyState>
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper>
@@ -28,7 +97,9 @@ const DiagnosisResultPage = () => {
 
         <ProductRow>
           <ProductText>[{result.productName}] 진단 결과:</ProductText>
-          <StatusBadge $color={status.color}>{status.label}</StatusBadge>
+          <StatusBadge $color={result.statusColor}>
+            {result.statusLabel}
+          </StatusBadge>
         </ProductRow>
 
         <PreviewWrap>
@@ -56,7 +127,12 @@ const DiagnosisResultPage = () => {
               <Marker src={locationMarker} alt="" />
             </DamagePoint>
           ))}
-          <RetakeButton type="button" onClick={() => navigate("/care")}>
+          <RetakeButton
+            type="button"
+            onClick={() =>
+              navigate(`/care?diagnosisId=${encodeURIComponent(result.id)}`)
+            }
+          >
             다시 촬영하기
           </RetakeButton>
         </PreviewWrap>
@@ -64,23 +140,38 @@ const DiagnosisResultPage = () => {
         <InfoSection>
           <InfoBlock>
             <InfoLabel>손상 상태</InfoLabel>
-            <InfoText>{result.damageStatus}</InfoText>
+            <InfoText>{result.damageStatus || "-"}</InfoText>
           </InfoBlock>
           <InfoBlock>
             <InfoLabel>관리 제안</InfoLabel>
-            <InfoText>{result.careSuggestion}</InfoText>
+            <InfoText>{result.careSuggestion || "-"}</InfoText>
           </InfoBlock>
         </InfoSection>
 
         <SubSection>
           <WarnIcon src={warnIcon} alt="" />
-          <SubText>
-            이 진단은 참고 목적으로만 제공됩니다. 내부 손상이나 정밀 점검이
-            필요한 경우, 공식 수선 센터 방문을 권장합니다.
-          </SubText>
+          <SubText>{result.notice}</SubText>
         </SubSection>
 
-        <AsButton type="button" onClick={() => navigate("/care/reservation")}>
+        <AsButton
+          type="button"
+          onClick={() =>
+            navigate("/care/reservation", {
+              state: {
+                form: {
+                  productId: result.productId ? String(result.productId) : "",
+                  diagnosisId: result.id ? String(result.id) : "",
+                  consultType: "",
+                  symptom: result.damageStatus || "",
+                  visitDate: null,
+                  visitAt: "",
+                  contactPhone: "",
+                  note: "",
+                },
+              },
+            })
+          }
+        >
           공식 AS 예약하기
         </AsButton>
       </Main>
@@ -104,6 +195,13 @@ const Main = styled.main`
   min-height: 0;
   padding: 2.4rem;
   overflow-y: auto;
+`;
+
+const EmptyState = styled.p`
+  margin: 4rem 2.4rem 0;
+  font-size: 1.4rem;
+  color: var(--color-gray);
+  text-align: center;
 `;
 
 const Headline = styled.h2`

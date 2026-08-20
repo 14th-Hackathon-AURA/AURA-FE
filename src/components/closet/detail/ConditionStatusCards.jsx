@@ -2,19 +2,41 @@ import styled from "styled-components";
 import warnIcon from "@assets/icons/closet/warn.svg";
 import bagIcon from "@assets/icons/closet/bag.svg";
 
-const ConditionStatusCards = () => (
-  <Cards>
-    <Card $variant="caution">
-      <Icon src={warnIcon} alt="" />
-      <Label>주의</Label>
-    </Card>
+const CONDITION_CONFIG = {
+  SAFE: {
+    label: "안전",
+    variant: "safe",
+    careLabel: "상태 양호",
+  },
+  CAUTION: {
+    label: "주의",
+    variant: "caution",
+    careLabel: "셀프 케어 권장",
+  },
+  DANGER: {
+    label: "위험",
+    variant: "danger",
+    careLabel: "전문 케어 권장",
+  },
+};
 
-    <Card $variant="care">
-      <Icon src={bagIcon} alt="" />
-      <Label>셀프 케어 권장</Label>
-    </Card>
-  </Cards>
-);
+const ConditionStatusCards = ({ conditionLevel }) => {
+  const config = CONDITION_CONFIG[conditionLevel] || CONDITION_CONFIG.CAUTION;
+
+  return (
+    <Cards>
+      <Card $variant={config.variant}>
+        <Icon src={warnIcon} alt="" />
+        <Label>{config.label}</Label>
+      </Card>
+
+      <Card $variant="care">
+        <Icon src={bagIcon} alt="" />
+        <Label>{config.careLabel}</Label>
+      </Card>
+    </Cards>
+  );
+};
 
 export default ConditionStatusCards;
 
@@ -33,8 +55,12 @@ const Card = styled.div`
   gap: 0.8rem;
   padding: 1.6rem;
   border-radius: 0.4rem;
-  background: ${({ $variant }) =>
-    $variant === "caution" ? "#FDF0F6" : "#F0EDED"};
+  background: ${({ $variant }) => {
+    if ($variant === "safe") return "#F0F7F2";
+    if ($variant === "danger") return "#FDF0F0";
+    if ($variant === "caution") return "#FDF0F6";
+    return "#F0EDED";
+  }};
 `;
 
 const Icon = styled.img`

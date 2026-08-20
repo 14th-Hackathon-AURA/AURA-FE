@@ -1,23 +1,69 @@
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import DetailHero from "@components/closet/detail/DetailHero";
 import DetailInfoSection from "@components/closet/detail/DetailInfoSection";
 import ConditionStatusCards from "@components/closet/detail/ConditionStatusCards";
-import { getClosetProductById } from "@mocks/closetMockData";
+import { mapProduct } from "@utils/productMappers";
+import { getProduct } from "@apis/products";
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
-  const product = getClosetProductById(productId);
+  const [requestId, setRequestId] = useState(productId);
+  const [product, setProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  const infoItems = [
-    { label: "카테고리", value: product.subCategory },
-    { label: "구매처", value: product.purchasePlace },
-    { label: "구매일", value: product.purchaseDate },
-    { label: "시리얼 번호", value: product.serialNumber },
-  ];
+  if (productId !== requestId) {
+    setRequestId(productId);
+    setProduct(null);
+    setIsLoading(true);
+    setNotFound(false);
+  }
 
-  if (!product) {
+  useEffect(() => {
+    let mounted = true;
+
+    getProduct(productId)
+      .then((data) => {
+        if (mounted) setProduct(mapProduct(data));
+      })
+      .catch(() => {
+        if (mounted) setNotFound(true);
+      })
+      .finally(() => {
+        if (mounted) setIsLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [productId]);
+
+  const infoItems = useMemo(
+    () =>
+      product
+        ? [
+            { label: "카테고리", value: product.subCategory || "-" },
+            { label: "구매처", value: product.purchasePlace || "-" },
+            { label: "구매일", value: product.purchaseDate || "-" },
+            { label: "시리얼 번호", value: product.serialNumber },
+          ]
+        : [],
+    [product],
+  );
+
+  if (isLoading) {
+    return (
+      <PageWrapper>
+        <PageHeader title="제품 상세" backTo="/closet" />
+        <EmptyState>불러오는 중...</EmptyState>
+      </PageWrapper>
+    );
+  }
+
+  if (notFound || !product) {
     return (
       <PageWrapper>
         <PageHeader title="제품 상세" backTo="/closet" />
@@ -34,13 +80,15 @@ const ProductDetailPage = () => {
         <DetailHero product={product} />
         <DetailInfoSection items={infoItems} />
 
-        <DiagnosisSection>
-          <DiagnosisHeader>
-            <DiagnosisTitle>상태 진단 내역</DiagnosisTitle>
-            <DiagnosisDate>{product.diagnosisDate} 진단</DiagnosisDate>
-          </DiagnosisHeader>
-          <ConditionStatusCards />
-        </DiagnosisSection>
+        {product.diagnosisDate && (
+          <DiagnosisSection>
+            <DiagnosisHeader>
+              <DiagnosisTitle>상태 진단 내역</DiagnosisTitle>
+              <DiagnosisDate>{product.diagnosisDate} 진단</DiagnosisDate>
+            </DiagnosisHeader>
+            <ConditionStatusCards conditionLevel={product.conditionLevel} />
+          </DiagnosisSection>
+        )}
       </Main>
     </PageWrapper>
   );

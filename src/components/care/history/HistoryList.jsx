@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import HistoryCard from "./HistoryCard";
 
-const HistoryList = ({ items, onEdit, onDelete }) => {
+const HistoryList = ({ items, onEdit, onDelete, onOpen }) => {
   if (items.length === 0) {
     return <EmptyText>진단 이력이 없습니다.</EmptyText>;
   }
@@ -14,6 +14,7 @@ const HistoryList = ({ items, onEdit, onDelete }) => {
           item={item}
           onEdit={onEdit}
           onDelete={onDelete}
+          onOpen={onOpen}
         />
       ))}
     </List>

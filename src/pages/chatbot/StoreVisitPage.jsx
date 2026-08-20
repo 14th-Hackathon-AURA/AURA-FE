@@ -4,13 +4,43 @@ import PageHeader from "@components/common/PageHeader";
 import CompleteOverlay from "@components/common/CompleteOverlay";
 import VisitCardSearchBar from "@components/chatbot/VisitCardSearchBar";
 import StoreVisitCard from "@components/chatbot/StoreVisitCard";
-import { MOCK_STORE_VISIT_CARDS } from "@mocks/storeVisitMockData";
+import { deleteVisitCard, getVisitCards } from "@apis/visitCards";
+import { mapVisitCard } from "@utils/visitCardMappers";
 
 const StoreVisitPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [cards, setCards] = useState(MOCK_STORE_VISIT_CARDS);
+  const [cards, setCards] = useState([]);
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [showToast, setShowToast] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadCards = async () => {
+      setIsLoading(true);
+      setErrorMessage("");
+
+      try {
+        const data = await getVisitCards();
+        if (!mounted) return;
+        setCards(data.map(mapVisitCard));
+      } catch {
+        if (!mounted) return;
+        setCards([]);
+        setErrorMessage("방문 카드를 불러오지 못했어요.");
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    };
+
+    loadCards();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!menuOpenId) return undefined;
@@ -48,10 +78,16 @@ const StoreVisitPage = () => {
     setMenuOpenId((prev) => (prev === cardId ? null : cardId));
   };
 
-  const handleDelete = (cardId) => {
-    setCards((prev) => prev.filter((card) => card.id !== cardId));
-    setMenuOpenId(null);
-    setShowToast(true);
+  const handleDelete = async (cardId) => {
+    try {
+      await deleteVisitCard(cardId);
+      setCards((prev) => prev.filter((card) => card.id !== cardId));
+      setMenuOpenId(null);
+      setShowToast(true);
+    } catch {
+      setMenuOpenId(null);
+      window.alert("삭제에 실패했어요. 다시 시도해주세요.");
+    }
   };
 
   return (
@@ -68,7 +104,11 @@ const StoreVisitPage = () => {
         <VisitCardSearchBar value={searchQuery} onChange={setSearchQuery} />
 
         <CardList>
-          {filteredCards.length > 0 ? (
+          {isLoading ? (
+            <EmptyText>불러오는 중...</EmptyText>
+          ) : errorMessage ? (
+            <EmptyText>{errorMessage}</EmptyText>
+          ) : filteredCards.length > 0 ? (
             filteredCards.map((card, index) => (
               <Fragment key={card.id}>
                 {index > 0 && <CardDivider />}
@@ -81,7 +121,11 @@ const StoreVisitPage = () => {
               </Fragment>
             ))
           ) : (
-            <EmptyText>검색 결과가 없습니다.</EmptyText>
+            <EmptyText>
+              {searchQuery.trim()
+                ? "검색 결과가 없습니다."
+                : "저장된 방문 카드가 없습니다."}
+            </EmptyText>
           )}
         </CardList>
       </Main>

@@ -1,34 +1,34 @@
 import styled from "styled-components";
 
-const STATUS_MAP = {
-  warn: { label: "주의", color: "var(--color-warn)" },
-  safe: { label: "안전", color: "var(--color-safe)" },
-  danger: { label: "위험", color: "var(--color-danger)" },
-};
-
-const HistoryCard = ({ item, onEdit, onDelete }) => {
-  const status = STATUS_MAP[item.status] ?? STATUS_MAP.warn;
-
-  return (
-    <Card>
+const HistoryCard = ({ item, onEdit, onDelete, onOpen }) => (
+  <Card>
+    <ThumbnailButton
+      type="button"
+      onClick={() => onOpen?.(item.id)}
+      aria-label="진단 결과 보기"
+    >
       <Thumbnail src={item.image} alt="" />
+    </ThumbnailButton>
 
-      <MetaRow>
-        <DateText>{item.date}</DateText>
-        <StatusBadge $color={status.color}>{status.label}</StatusBadge>
-      </MetaRow>
+    <MetaRow>
+      <DateText>{item.date}</DateText>
+      <StatusBadge $color={item.statusColor}>
+        {item.statusLabel || "주의"}
+      </StatusBadge>
+    </MetaRow>
 
-      <Actions>
-        <ActionButton type="button" onClick={() => onEdit?.(item.id)}>
-          수정하기
-        </ActionButton>
-        <ActionButton type="button" onClick={() => onDelete?.(item.id)}>
-          삭제하기
-        </ActionButton>
-      </Actions>
-    </Card>
-  );
-};
+    {item.productName && <ProductName>{item.productName}</ProductName>}
+
+    <Actions>
+      <ActionButton type="button" onClick={() => onEdit?.(item.id)}>
+        수정하기
+      </ActionButton>
+      <ActionButton type="button" onClick={() => onDelete?.(item.id)}>
+        삭제하기
+      </ActionButton>
+    </Actions>
+  </Card>
+);
 
 export default HistoryCard;
 
@@ -40,6 +40,14 @@ const Card = styled.article`
   border-radius: 0.6rem;
   border: 1px solid var(--color-stroke-gray);
   background: var(--color-white);
+`;
+
+const ThumbnailButton = styled.button`
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
 `;
 
 const Thumbnail = styled.img`
@@ -64,6 +72,14 @@ const DateText = styled.p`
   color: var(--color-black);
 `;
 
+const ProductName = styled.p`
+  margin: -0.6rem 0 0;
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-gray);
+`;
+
 const StatusBadge = styled.span`
   flex-shrink: 0;
   display: inline-flex;
@@ -71,7 +87,7 @@ const StatusBadge = styled.span`
   justify-content: center;
   padding: 0.6rem 1.2rem;
   border-radius: 999px;
-  background: ${({ $color }) => $color};
+  background: ${({ $color }) => $color || "var(--color-warn)"};
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--color-white);

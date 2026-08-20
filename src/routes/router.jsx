@@ -1,6 +1,5 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import App from "../App";
-import HomePage from "@pages/Home/HomePage";
 import OnboardingPage from "@pages/Onboarding/OnboardingPage";
 import SignUpPage from "@pages/SignUp/SignUpPage";
 import LoginPage from "@pages/Login/LoginPage";
@@ -32,10 +31,6 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <OnboardingPage />,
-      },
-      {
-        path: "/home",
-        element: <HomePage />,
       },
       {
         path: "/signup",
@@ -116,7 +111,7 @@ const router = createBrowserRouter([
         element: <DiagnosisHistoryPage />,
       },
       {
-        path: "/care/result",
+        path: "/care/result/:diagnosisId",
         element: <DiagnosisResultPage />,
       },
       {

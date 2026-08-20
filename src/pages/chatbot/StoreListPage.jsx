@@ -1,31 +1,69 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import StoreSearchBar from "@components/care/reservation/StoreSearchBar";
 import StoreInfoCard from "@components/chatbot/StoreInfoCard";
 import useMemberProfile from "@hooks/useMemberProfile";
-import { MOCK_CERTIFIED_STORES } from "@mocks/storeVisitMockData";
+import { getStores } from "@apis/stores";
+import { getCurrentPosition, mapStore } from "@utils/storeMappers";
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 const StoreListPage = () => {
   const location = useLocation();
   const { nickname } = useMemberProfile();
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [stores, setStores] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const backTo = location.state?.cardId
     ? `/chatbot/store-visit/${location.state.cardId}`
     : "/chatbot/store-visit";
 
-  const filteredStores = useMemo(() => {
-    const keyword = query.trim().toLowerCase();
-    if (!keyword) return MOCK_CERTIFIED_STORES;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query.trim());
+    }, SEARCH_DEBOUNCE_MS);
 
-    return MOCK_CERTIFIED_STORES.filter(
-      (store) =>
-        store.name.toLowerCase().includes(keyword) ||
-        store.address.toLowerCase().includes(keyword),
-    );
+    return () => clearTimeout(timer);
   }, [query]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadStores = async () => {
+      setIsLoading(true);
+      setErrorMessage("");
+
+      try {
+        const coords = await getCurrentPosition();
+        const response = await getStores({
+          q: debouncedQuery || undefined,
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          limit: 20,
+        });
+
+        if (!mounted) return;
+        setStores(response.stores.map(mapStore));
+      } catch {
+        if (!mounted) return;
+        setStores([]);
+        setErrorMessage("매장 목록을 불러오지 못했어요.");
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    };
+
+    loadStores();
+
+    return () => {
+      mounted = false;
+    };
+  }, [debouncedQuery]);
 
   return (
     <PageWrapper>
@@ -43,11 +81,19 @@ const StoreListPage = () => {
 
         <Section>
           <SectionTitle>추천 매장</SectionTitle>
-          <StoreList>
-            {filteredStores.map((store) => (
-              <StoreInfoCard key={store.id} store={store} />
-            ))}
-          </StoreList>
+          {isLoading ? (
+            <StatusText>불러오는 중...</StatusText>
+          ) : errorMessage ? (
+            <StatusText>{errorMessage}</StatusText>
+          ) : stores.length === 0 ? (
+            <StatusText>검색 결과가 없습니다.</StatusText>
+          ) : (
+            <StoreList>
+              {stores.map((store) => (
+                <StoreInfoCard key={store.id} store={store} />
+              ))}
+            </StoreList>
+          )}
         </Section>
       </Main>
     </PageWrapper>
@@ -99,6 +145,13 @@ const SectionTitle = styled.h3`
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--color-black);
+`;
+
+const StatusText = styled.p`
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--color-placeholder-gray);
 `;
 
 const StoreList = styled.div`

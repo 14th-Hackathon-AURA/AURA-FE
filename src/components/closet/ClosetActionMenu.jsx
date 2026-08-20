@@ -2,25 +2,43 @@ import styled from "styled-components";
 import deleteIcon from "@assets/icons/closet/delete.svg";
 import editIcon from "@assets/icons/closet/edit.svg";
 
-const ClosetActionMenu = ({ onDelete, onEdit }) => (
-  <Menu
-    role="menu"
-    onPointerDown={(event) => event.stopPropagation()}
-    onClick={(event) => event.stopPropagation()}
-  >
-    <MenuItem type="button" role="menuitem" onClick={onDelete}>
-      <span>삭제하기</span>
-      <Icon src={deleteIcon} alt="" />
-    </MenuItem>
+const ClosetActionMenu = ({ onDelete, onEdit }) => {
+  const handleDelete = (event) => {
+    // 카드 전체가 Link라서 기본 이동을 막지 않으면 삭제 직후 상세로 진입함
+    event.preventDefault();
+    event.stopPropagation();
+    onDelete?.();
+  };
 
-    <Divider />
+  const handleEdit = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onEdit?.();
+  };
 
-    <MenuItem type="button" role="menuitem" onClick={onEdit}>
-      <span>수정하기</span>
-      <Icon src={editIcon} alt="" />
-    </MenuItem>
-  </Menu>
-);
+  return (
+    <Menu
+      role="menu"
+      onPointerDown={(event) => event.stopPropagation()}
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      }}
+    >
+      <MenuItem type="button" role="menuitem" onClick={handleDelete}>
+        <span>삭제하기</span>
+        <Icon src={deleteIcon} alt="" />
+      </MenuItem>
+
+      <Divider />
+
+      <MenuItem type="button" role="menuitem" onClick={handleEdit}>
+        <span>수정하기</span>
+        <Icon src={editIcon} alt="" />
+      </MenuItem>
+    </Menu>
+  );
+};
 
 export default ClosetActionMenu;
 

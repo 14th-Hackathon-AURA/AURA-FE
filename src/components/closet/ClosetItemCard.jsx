@@ -19,27 +19,33 @@ const ClosetItemCard = ({
   };
 
   return (
-    <Card to={`/closet/${item.id}`}>
-      <ImageWrap>
-        <Image src={item.image} alt={item.name} />
-        <Gradient />
+    <Card>
+      <CardLink to={`/closet/${item.id}`}>
+        <ImageWrap>
+          {item.image ? (
+            <Image src={item.image} alt={item.name} />
+          ) : (
+            <ImagePlaceholder aria-hidden="true" />
+          )}
+          <Gradient />
 
-        {item.verified && (
-          <Badge>
-            <BadgeIcon src={verifiedIcon} alt="" />
-            인증 완료
-          </Badge>
-        )}
+          {item.verified && (
+            <Badge>
+              <BadgeIcon src={verifiedIcon} alt="" />
+              인증 완료
+            </Badge>
+          )}
 
-        <Info>
-          <Name>{item.name}</Name>
-          <Meta>
-            구매일
-            <Dot />
-            {item.purchaseDate}
-          </Meta>
-        </Info>
-      </ImageWrap>
+          <Info>
+            <Name>{item.name}</Name>
+            <Meta>
+              구매일
+              <Dot />
+              {item.purchaseDate}
+            </Meta>
+          </Info>
+        </ImageWrap>
+      </CardLink>
 
       <MoreButton
         type="button"
@@ -59,8 +65,12 @@ const ClosetItemCard = ({
 
 export default ClosetItemCard;
 
-const Card = styled(Link)`
+const Card = styled.div`
   position: relative;
+  width: 100%;
+`;
+
+const CardLink = styled(Link)`
   display: block;
   width: 100%;
 `;
@@ -75,7 +85,15 @@ const ImageWrap = styled.div`
 const Image = styled.img`
   width: 100%;
   height: 100%;
+  aspect-ratio: 1 / 1;
   object-fit: contain;
+  background: var(--color-soft-gray);
+`;
+
+const ImagePlaceholder = styled.div`
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--color-soft-gray);
 `;
 
 const Gradient = styled.div`

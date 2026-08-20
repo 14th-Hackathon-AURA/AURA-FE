@@ -2,11 +2,28 @@ import { useState } from "react";
 import styled from "styled-components";
 import chevronIcon from "@assets/icons/closet/chevron-down.svg";
 
+const getOptionValue = (option) =>
+  typeof option === "object" && option !== null ? option.value : option;
+
+const getOptionLabel = (option) =>
+  typeof option === "object" && option !== null ? option.label : option;
+
 const CategorySelect = ({ label, placeholder, value, options, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const matchedOption = options
+    .map((option) => ({
+      value: getOptionValue(option),
+      label: getOptionLabel(option),
+    }))
+    .find((option) => String(option.value) === String(value));
+
+  const selectedLabel = matchedOption?.label ?? (value || "");
+  const isPlaceholder =
+    matchedOption == null && (value === "" || value == null);
+
   const handleSelect = (option) => {
-    onChange(option);
+    onChange(getOptionValue(option));
     setIsOpen(false);
   };
 
@@ -15,21 +32,28 @@ const CategorySelect = ({ label, placeholder, value, options, onChange }) => {
       {label && <Label>{label}</Label>}
       <Box>
         <Trigger type="button" onClick={() => setIsOpen((prev) => !prev)}>
-          <ValueText $placeholder={!value}>{value || placeholder}</ValueText>
+          <ValueText $placeholder={isPlaceholder}>
+            {selectedLabel || placeholder}
+          </ValueText>
           <Chevron src={chevronIcon} alt="" $open={isOpen} />
         </Trigger>
 
         {isOpen && (
           <OptionsList>
-            {options.map((option) => (
-              <Option
-                key={option}
-                type="button"
-                onClick={() => handleSelect(option)}
-              >
-                {option}
-              </Option>
-            ))}
+            {options.map((option) => {
+              const optionValue = getOptionValue(option);
+              const optionLabel = getOptionLabel(option);
+
+              return (
+                <Option
+                  key={String(optionValue)}
+                  type="button"
+                  onClick={() => handleSelect(option)}
+                >
+                  {optionLabel}
+                </Option>
+              );
+            })}
           </OptionsList>
         )}
       </Box>
