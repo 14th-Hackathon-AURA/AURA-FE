@@ -7,14 +7,39 @@ import ClosetSearchBar from "@components/closet/ClosetSearchBar";
 import CategoryFilter from "@components/closet/CategoryFilter";
 import ClosetItemList from "@components/closet/ClosetItemList";
 import ChatbotButton from "@components/closet/ChatbotButton";
-import { CLOSET_CATEGORIES, MOCK_CLOSET_PRODUCTS } from "@mocks/closetMockData";
+import { CLOSET_CATEGORIES } from "@mocks/closetMockData";
+import { mapProduct } from "@utils/productMappers";
+import { deleteProduct, getMyProducts } from "@apis/products";
 
 const ClosetPage = () => {
   const navigate = useNavigate();
-  const [items, setItems] = useState(MOCK_CLOSET_PRODUCTS);
+  const [items, setItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("전체");
   const [menuOpenId, setMenuOpenId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+
+    getMyProducts()
+      .then((products) => {
+        if (mounted) setItems(products.map(mapProduct));
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setItems([]);
+        setErrorMessage("제품 목록을 불러오지 못했어요.");
+      })
+      .finally(() => {
+        if (mounted) setIsLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!menuOpenId) return undefined;
@@ -32,7 +57,9 @@ const ClosetPage = () => {
       const matchesSearch =
         !query ||
         item.name.toLowerCase().includes(query) ||
-        item.category.toLowerCase().includes(query);
+        item.category.toLowerCase().includes(query) ||
+        item.subCategory.toLowerCase().includes(query) ||
+        item.brand.toLowerCase().includes(query);
       return matchesCategory && matchesSearch;
     });
   }, [items, searchQuery, category]);
@@ -41,13 +68,20 @@ const ClosetPage = () => {
     setMenuOpenId((prev) => (prev === id ? null : id));
   };
 
-  const handleDelete = (id) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-    setMenuOpenId(null);
+  const handleDelete = async (id) => {
+    try {
+      await deleteProduct(id);
+      setItems((prev) => prev.filter((item) => String(item.id) !== String(id)));
+    } catch {
+      setErrorMessage("제품 삭제에 실패했어요.");
+    } finally {
+      setMenuOpenId(null);
+    }
   };
 
-  const handleEdit = () => {
+  const handleEdit = (id) => {
     setMenuOpenId(null);
+    navigate(`/closet/${id}`);
   };
 
   return (
@@ -76,7 +110,11 @@ const ClosetPage = () => {
           />
         </Toolbar>
 
-        {filteredItems.length > 0 ? (
+        {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
+
+        {isLoading ? (
+          <EmptyText>불러오는 중...</EmptyText>
+        ) : filteredItems.length > 0 ? (
           <ClosetItemList
             items={filteredItems}
             menuOpenId={menuOpenId}
@@ -168,5 +206,12 @@ const EmptyText = styled.p`
   margin: 4rem 0 0;
   font-size: 1.4rem;
   color: var(--color-gray);
+  text-align: center;
+`;
+
+const ErrorText = styled.p`
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--color-primary);
   text-align: center;
 `;

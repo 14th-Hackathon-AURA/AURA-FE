@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
@@ -5,16 +6,56 @@ import CareAccordion from "@components/closet/care/CareAccordion";
 import CareChecklist from "@components/closet/care/CareChecklist";
 import CareCenterCta from "@components/closet/care/CareCenterCta";
 import useMemberProfile from "@hooks/useMemberProfile";
-import { getClosetProductById } from "@mocks/closetMockData";
 import { getCareGuideByMaterial } from "@mocks/careGuideMockData";
+import { mapProduct } from "@utils/productMappers";
+import { getProduct } from "@apis/products";
 
 const CareGuidePage = () => {
   const { productId } = useParams();
   const { nickname } = useMemberProfile();
-  const product = getClosetProductById(productId);
-  const guide = getCareGuideByMaterial(product.material);
+  const [requestId, setRequestId] = useState(productId);
+  const [product, setProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  if (!product) {
+  if (productId !== requestId) {
+    setRequestId(productId);
+    setProduct(null);
+    setIsLoading(true);
+    setNotFound(false);
+  }
+
+  useEffect(() => {
+    let mounted = true;
+
+    getProduct(productId)
+      .then((data) => {
+        if (mounted) setProduct(mapProduct(data));
+      })
+      .catch(() => {
+        if (mounted) setNotFound(true);
+      })
+      .finally(() => {
+        if (mounted) setIsLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [productId]);
+
+  const guide = getCareGuideByMaterial(product?.material);
+
+  if (isLoading) {
+    return (
+      <PageWrapper>
+        <PageHeader title="케어 가이드" backTo="/closet" />
+        <EmptyState>불러오는 중...</EmptyState>
+      </PageWrapper>
+    );
+  }
+
+  if (notFound || !product) {
     return (
       <PageWrapper>
         <PageHeader title="케어 가이드" backTo="/closet" />

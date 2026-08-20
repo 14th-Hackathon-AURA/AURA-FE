@@ -3,7 +3,7 @@ import styled from "styled-components";
 import cameraPlusIcon from "@assets/icons/closet/camera-plus.svg";
 import UploadActionMenu from "@components/closet/UploadActionMenu";
 
-const ReceiptUploader = ({ previewUrl, onChange }) => {
+const ReceiptUploader = ({ previewUrl, isExtracting = false, onChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
@@ -77,10 +77,12 @@ const ReceiptUploader = ({ previewUrl, onChange }) => {
         <HiddenInput
           ref={galleryInputRef}
           type="file"
-          accept="image/jpeg,image/png"
+          accept="image/jpeg,image/png,application/pdf"
           onChange={handleFileChange}
         />
       </UploadWrap>
+
+      {isExtracting && <StatusText>문서를 분석하고 있습니다.</StatusText>}
 
       <HelpText>
         JPG, PNG 형식의 텍스트가 잘 보이는 사진을 올려주세요.
@@ -159,6 +161,12 @@ const Preview = styled.img`
 
 const HiddenInput = styled.input`
   display: none;
+`;
+
+const StatusText = styled.p`
+  margin: 1.2rem 0 0;
+  font-size: 1.2rem;
+  color: var(--color-gray);
 `;
 
 const HelpText = styled.p`

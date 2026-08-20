@@ -7,13 +7,27 @@ import ProductInfoForm from "@components/closet/register/ProductInfoForm";
 import useProductRegisterForm from "@hooks/useProductRegisterForm";
 import { PRODUCT_REGISTER_CATEGORIES } from "@mocks/closetMockData";
 
+const MANUAL_FIELD_LABELS = {
+  brand: "브랜드",
+  name: "제품명",
+  category: "카테고리",
+  purchased_at: "구매일",
+  purchase_place: "구매처",
+  purchase_price: "구매가",
+  purchase_channel: "구매 채널",
+};
+
 const ProductRegisterPage = () => {
   const {
     form,
     updateField,
     previewUrl,
     handleImageChange,
+    manualInputRequired,
+    isExtracting,
+    isSubmitting,
     isSubmitted,
+    errorMessage,
     handleSubmit,
   } = useProductRegisterForm();
 
@@ -22,7 +36,20 @@ const ProductRegisterPage = () => {
       <PageHeader title="제품 등록" backTo="/closet" />
 
       <Main as="form" onSubmit={handleSubmit}>
-        <ReceiptUploader previewUrl={previewUrl} onChange={handleImageChange} />
+        <ReceiptUploader
+          previewUrl={previewUrl}
+          isExtracting={isExtracting}
+          onChange={handleImageChange}
+        />
+
+        {manualInputRequired.length > 0 && (
+          <ManualNotice>
+            아래 항목은 직접 입력해주세요:{" "}
+            {manualInputRequired
+              .map((field) => MANUAL_FIELD_LABELS[field] || field)
+              .join(", ")}
+          </ManualNotice>
+        )}
 
         <ProductInfoForm
           values={form}
@@ -30,7 +57,11 @@ const ProductRegisterPage = () => {
           categoryOptions={PRODUCT_REGISTER_CATEGORIES}
         />
 
-        <SubmitButton type="submit">클로젯에 등록하기</SubmitButton>
+        {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
+
+        <SubmitButton type="submit" disabled={isSubmitting || isExtracting}>
+          {isSubmitting ? "등록 중..." : "클로젯에 등록하기"}
+        </SubmitButton>
       </Main>
 
       {isSubmitted && <CompleteOverlay message="제품 등록이 완료되었습니다" />}
@@ -55,6 +86,22 @@ const Main = styled.main`
   padding: 2.4rem;
 `;
 
+const ManualNotice = styled.p`
+  margin: 0 0 1.6rem;
+  padding: 1.2rem;
+  border-radius: 0.4rem;
+  background: var(--color-soft-gray);
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--color-darkgray);
+`;
+
+const ErrorText = styled.p`
+  margin: 1.6rem 0 0;
+  font-size: 1.2rem;
+  color: var(--color-primary);
+`;
+
 const SubmitButton = styled(Button)`
   align-self: flex-start;
   width: auto;
@@ -63,4 +110,8 @@ const SubmitButton = styled(Button)`
   font-weight: 400;
   border-radius: 0.2rem;
   margin-top: 1.6rem;
+
+  &:disabled {
+    opacity: 0.6;
+  }
 `;
