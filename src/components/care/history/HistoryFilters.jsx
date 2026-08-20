@@ -1,16 +1,19 @@
 import styled from "styled-components";
 import CategorySelect from "@components/closet/register/CategorySelect";
-import {
-  DIAGNOSIS_PRODUCT_OPTIONS,
-  DIAGNOSIS_YEAR_OPTIONS,
-} from "@mocks/diagnosisHistoryMockData";
+import { DIAGNOSIS_YEAR_OPTIONS } from "@utils/diagnosisMappers";
 
-const HistoryFilters = ({ product, year, onProductChange, onYearChange }) => (
+const HistoryFilters = ({
+  product,
+  year,
+  productOptions = [],
+  onProductChange,
+  onYearChange,
+}) => (
   <Filters>
     <CategorySelect
       label="제품 선택"
       placeholder="Select..."
-      options={DIAGNOSIS_PRODUCT_OPTIONS}
+      options={productOptions}
       value={product}
       onChange={onProductChange}
     />

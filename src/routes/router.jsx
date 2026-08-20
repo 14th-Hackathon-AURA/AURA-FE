@@ -111,7 +111,7 @@ const router = createBrowserRouter([
         element: <DiagnosisHistoryPage />,
       },
       {
-        path: "/care/result",
+        path: "/care/result/:diagnosisId",
         element: <DiagnosisResultPage />,
       },
       {

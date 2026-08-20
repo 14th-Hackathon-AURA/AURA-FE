@@ -2,12 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "@components/common/Button";
+import CategorySelect from "@components/closet/register/CategorySelect";
 import UploadActionMenu from "@components/closet/UploadActionMenu";
 import cameraPlusIcon from "@assets/icons/care/camera-plus.svg";
 
 const DiagnosisUpload = ({
   previewUrl,
   isDiagnosing,
+  productId,
+  productOptions,
+  productsLoading,
+  errorMessage,
+  onProductChange,
   onImageChange,
   onStartDiagnosis,
 }) => {
@@ -56,6 +62,16 @@ const DiagnosisUpload = ({
         구매한 제품의 현재 상태를 AI가 사진으로 확인해 드려요
       </Description>
 
+      <CategorySelect
+        label="제품 선택"
+        placeholder={
+          productsLoading ? "불러오는 중..." : "진단할 제품을 선택하세요"
+        }
+        options={productOptions}
+        value={productId}
+        onChange={onProductChange}
+      />
+
       <UploadWrap onPointerDown={(event) => event.stopPropagation()}>
         <UploadBox
           type="button"
@@ -97,6 +113,8 @@ const DiagnosisUpload = ({
           onChange={handleFileChange}
         />
       </UploadWrap>
+
+      {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
 
       <StartButton type="button" onClick={onStartDiagnosis}>
         AI 진단 시작하기
@@ -148,6 +166,7 @@ const Description = styled.p`
 const UploadWrap = styled.div`
   position: relative;
   width: 100%;
+  margin-top: 1.6rem;
 `;
 
 const UploadBox = styled.button`
@@ -188,6 +207,14 @@ const Preview = styled.img`
 
 const HiddenInput = styled.input`
   display: none;
+`;
+
+const ErrorText = styled.p`
+  margin: 1.2rem 0 0;
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-danger);
 `;
 
 const StartButton = styled(Button)`
