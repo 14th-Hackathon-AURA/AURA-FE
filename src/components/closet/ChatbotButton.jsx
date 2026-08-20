@@ -1,11 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import chatbotIcon from "@assets/icons/chatbot.svg";
 
-const ChatbotButton = ({ onClick }) => (
-  <Fab type="button" onClick={onClick} aria-label="챗봇">
-    <Icon src={chatbotIcon} alt="" />
-  </Fab>
-);
+const ChatbotButton = () => {
+  const navigate = useNavigate();
+
+  return (
+    <Fab type="button" onClick={() => navigate("/chatbot")} aria-label="챗봇">
+      <Icon src={chatbotIcon} alt="" />
+    </Fab>
+  );
+};
 
 export default ChatbotButton;
 
