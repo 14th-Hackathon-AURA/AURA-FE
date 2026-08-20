@@ -2,4 +2,20 @@
   --color-black: #1a1a1a;
   --color-white: #ffffff;
   --color-primary: #2d1b33;
+  --color-ivory: #fdfbf7;
+  --color-navy: #1f2937;
+  --color-border: #dcdcdc;
+  --color-darkgray: #4b454b;
+  --color-gray: #7d757c;
+  --color-mediumgray: #6b7280;
+  --color-accent-purple: #6430ca;
+  --color-stroke-gray: #e7e4e3;
+  --color-soft-gray: #fdfcf9;
+  --color-tab-gray: #7d757c;
+  --color-avatar-bg: #e5e5e5;
+  --color-input-border: #f1f1f1;
+  --color-placeholder-gray: #908c94;
+  --color-warn: #c49d1f;
+  --color-safe: #1f7c3e;
+  --color-danger: #872355;
 }
