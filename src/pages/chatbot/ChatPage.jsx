@@ -58,7 +58,7 @@ const ChatPage = () => {
 
   return (
     <PageWrapper>
-      <PageHeader title="AI 챗봇" />
+      <PageHeader title="AI 챗봇" backTo="/closet" />
 
       <Body>
         {messages.length === 0 ? (
