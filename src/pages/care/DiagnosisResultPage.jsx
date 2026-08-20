@@ -5,8 +5,10 @@ import PageHeader from "@components/common/PageHeader";
 import Button from "@components/common/Button";
 import locationMarker from "@assets/icons/care/location-marker.svg";
 import warnIcon from "@assets/icons/care/warn.svg";
-import { getDiagnosis } from "@apis/diagnoses";
 import { mapDiagnosisResult } from "@utils/diagnosisMappers";
+import { getDiagnosis } from "@apis/diagnoses";
+import { getProduct } from "@apis/products";
+import { mapProduct } from "@utils/productMappers";
 
 const SPOTLIGHT_RADIUS = "2rem";
 
@@ -33,9 +35,24 @@ const DiagnosisResultPage = () => {
     let mounted = true;
 
     getDiagnosis(diagnosisId)
-      .then((data) => {
+      .then(async (data) => {
         if (!mounted) return;
-        setResult(mapDiagnosisResult(data));
+
+        let mapped = mapDiagnosisResult(data);
+
+        if (mapped.productId) {
+          try {
+            const product = await getProduct(mapped.productId);
+            const productName = mapProduct(product).name?.trim();
+            if (productName) {
+              mapped = { ...mapped, productName };
+            }
+          } catch {
+            // 제품명은 '제품'으로 표시
+          }
+        }
+
+        if (mounted) setResult(mapped);
       })
       .catch(() => {
         if (mounted) {
@@ -142,12 +159,13 @@ const DiagnosisResultPage = () => {
             navigate("/care/reservation", {
               state: {
                 form: {
-                  product: result.productName,
+                  productId: result.productId ? String(result.productId) : "",
+                  diagnosisId: result.id ? String(result.id) : "",
                   consultType: "",
-                  symptom: "",
+                  symptom: result.damageStatus || "",
                   visitDate: null,
-                  visitTime: "",
-                  contact: "",
+                  visitAt: "",
+                  contactPhone: "",
                   note: "",
                 },
               },

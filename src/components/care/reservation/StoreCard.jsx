@@ -1,13 +1,15 @@
 import styled from "styled-components";
 import Button from "@components/common/Button";
+import { formatStoreDistance } from "@utils/storeMappers";
 
 const StoreCard = ({ store, onSelect }) => (
   <Card>
     <StoreName>{store.name}</StoreName>
     <Meta>
-      {store.address} | {store.isOpen ? "영업 중" : "영업 종료"} · {store.hours}
+      {store.address}
+      {store.openingHours ? ` | ${store.openingHours}` : ""}
     </Meta>
-    <Meta>현재 위치에서 약 {store.distanceKm} km</Meta>
+    <Meta>{formatStoreDistance(store.distanceKm)}</Meta>
     <SelectButton type="button" onClick={() => onSelect(store)}>
       선택하기
     </SelectButton>

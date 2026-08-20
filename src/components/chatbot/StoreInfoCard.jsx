@@ -1,13 +1,19 @@
 import styled from "styled-components";
 import Button from "@components/common/Button";
+import { formatStoreDistance } from "@utils/storeMappers";
 
 const StoreInfoCard = ({ store }) => {
-  const statusLabel = store.isOpen ? "영업 중" : "영업 종료";
-
   const handleMapClick = () => {
-    const query = encodeURIComponent(`${store.name} ${store.address}`);
+    if (store.mapSearchUrl) {
+      window.open(store.mapSearchUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    const query = encodeURIComponent(
+      `${store.name || ""} ${store.address || ""}`.trim(),
+    );
     window.open(
-      `https://map.kakao.com/?q=${query}`,
+      `https://map.naver.com/p/search/${query}`,
       "_blank",
       "noopener,noreferrer",
     );
@@ -23,15 +29,20 @@ const StoreInfoCard = ({ store }) => {
       <StoreName>{store.name}</StoreName>
 
       <Meta>
-        {store.address} | {statusLabel} · {store.hours}
+        {store.address}
+        {store.openingHours ? ` | ${store.openingHours}` : ""}
       </Meta>
-      <Meta>현재 위치에서 약 {store.distanceKm} km</Meta>
+      <Meta>{formatStoreDistance(store.distanceKm)}</Meta>
 
       <ButtonRow>
         <MapButton type="button" onClick={handleMapClick}>
           지도 보기
         </MapButton>
-        <CallButton type="button" onClick={handleCallClick}>
+        <CallButton
+          type="button"
+          onClick={handleCallClick}
+          disabled={!store.phone}
+        >
           전화 연결
         </CallButton>
       </ButtonRow>
@@ -89,4 +100,9 @@ const CallButton = styled(Button)`
   background: var(--color-white);
   border: 1px solid var(--color-black);
   color: var(--color-black);
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
 `;

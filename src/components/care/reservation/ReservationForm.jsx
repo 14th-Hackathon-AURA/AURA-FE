@@ -5,14 +5,17 @@ import ReservationSelect from "./ReservationSelect";
 import ReservationDateField from "./ReservationDateField";
 import ReservationField from "./ReservationField";
 import warnIcon from "@assets/icons/care/warn.svg";
-import {
-  RESERVATION_CONSULT_OPTIONS,
-  RESERVATION_PRODUCT_OPTIONS,
-} from "@mocks/reservationMockData";
+import { RESERVATION_CONSULT_OPTIONS } from "@mocks/reservationMockData";
 
 const ReservationForm = ({
   values,
   storeName,
+  productOptions = [],
+  productsLoading = false,
+  timeOptions = [],
+  timesLoading = false,
+  errorMessage = "",
+  isSubmitting = false,
   onChangeField,
   onSelectStore,
   onSubmit,
@@ -22,6 +25,11 @@ const ReservationForm = ({
 
   const toggleField = (field) => (nextOpen) => {
     setOpenField(nextOpen ? field : null);
+  };
+
+  const handleDateChange = (value) => {
+    onChangeField("visitDate", value);
+    onChangeField("visitAt", "");
   };
 
   return (
@@ -40,11 +48,14 @@ const ReservationForm = ({
 
       <ReservationSelect
         label="제품 선택"
-        value={values.product}
-        options={RESERVATION_PRODUCT_OPTIONS}
+        value={values.productId}
+        options={productOptions}
         isOpen={openField === "product"}
         onToggle={toggleField("product")}
-        onChange={(value) => onChangeField("product", value)}
+        onChange={(value) => onChangeField("productId", value)}
+        disabled={productsLoading}
+        placeholder={productsLoading ? "불러오는 중..." : "Select..."}
+        emptyMessage="등록된 제품이 없습니다."
       />
 
       <ReservationSelect
@@ -69,21 +80,35 @@ const ReservationForm = ({
         viewDate={viewDate}
         isOpen={openField === "visitDate"}
         onToggle={toggleField("visitDate")}
-        onChange={(value) => onChangeField("visitDate", value)}
+        onChange={handleDateChange}
         onViewDateChange={setViewDate}
       />
 
-      <ReservationField
+      <ReservationSelect
         label="희망 방문 시간"
-        value={values.visitTime}
-        onChange={(event) => onChangeField("visitTime", event.target.value)}
+        value={values.visitAt}
+        options={timeOptions}
+        isOpen={openField === "visitAt"}
+        onToggle={toggleField("visitAt")}
+        onChange={(value) => onChangeField("visitAt", value)}
+        disabled={!values.storeId || !values.visitDate || timesLoading}
+        placeholder={
+          !values.storeId
+            ? "매장을 먼저 선택해 주세요"
+            : !values.visitDate
+              ? "날짜를 먼저 선택해 주세요"
+              : timesLoading
+                ? "불러오는 중..."
+                : "Select..."
+        }
+        emptyMessage="예약 가능한 시간이 없습니다."
       />
 
       <ReservationField
         label="연락처 (전화번호)"
         type="tel"
-        value={values.contact}
-        onChange={(event) => onChangeField("contact", event.target.value)}
+        value={values.contactPhone}
+        onChange={(event) => onChangeField("contactPhone", event.target.value)}
       />
 
       <ReservationField
@@ -101,7 +126,11 @@ const ReservationForm = ({
         </NoticeText>
       </Notice>
 
-      <SubmitButton type="submit">예약 요청하기</SubmitButton>
+      {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
+
+      <SubmitButton type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "예약 요청 중..." : "예약 요청하기"}
+      </SubmitButton>
     </Form>
   );
 };
@@ -161,6 +190,14 @@ const NoticeText = styled.p`
   color: var(--color-placeholder-gray);
 `;
 
+const ErrorText = styled.p`
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-danger, #b55341);
+`;
+
 const SubmitButton = styled(Button)`
   width: 100%;
   padding: 1.2rem 2.4rem;
@@ -168,4 +205,9 @@ const SubmitButton = styled(Button)`
   font-size: 1.4rem;
   font-weight: 400;
   text-align: center;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
 `;
