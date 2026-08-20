@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import searchIcon from "@assets/icons/care/search.svg";
+import deleteIcon from "@assets/icons/delete.svg";
 
 const StoreSearchBar = ({
   value,
@@ -9,11 +10,20 @@ const StoreSearchBar = ({
   <Wrapper>
     <Icon src={searchIcon} alt="" />
     <Input
-      type="search"
+      type="text"
       value={value}
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}
     />
+    {value && (
+      <ClearButton
+        type="button"
+        onClick={() => onChange("")}
+        aria-label="검색어 삭제"
+      >
+        <Icon src={deleteIcon} alt="" />
+      </ClearButton>
+    )}
   </Wrapper>
 );
 
@@ -49,4 +59,15 @@ const Input = styled.input`
   &::placeholder {
     color: var(--color-placeholder-gray);
   }
+`;
+
+const ClearButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 `;
