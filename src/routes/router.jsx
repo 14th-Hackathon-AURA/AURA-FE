@@ -19,6 +19,7 @@ import CarePage from "@pages/care/CarePage";
 import DiagnosisHistoryPage from "@pages/care/DiagnosisHistoryPage";
 import DiagnosisResultPage from "@pages/care/DiagnosisResultPage";
 import ReservationPage from "@pages/care/ReservationPage";
+import StoreSelectPage from "@pages/care/StoreSelectPage";
 
 const router = createBrowserRouter([
   {
@@ -106,6 +107,10 @@ const router = createBrowserRouter([
       {
         path: "/care/reservation",
         element: <ReservationPage />,
+      },
+      {
+        path: "/care/reservation/stores",
+        element: <StoreSelectPage />,
       },
     ],
   },

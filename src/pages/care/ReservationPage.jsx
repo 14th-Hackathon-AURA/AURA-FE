@@ -4,7 +4,6 @@ import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import CompleteOverlay from "@components/common/CompleteOverlay";
 import ReservationForm from "@components/care/reservation/ReservationForm";
-import { MOCK_SELECTED_STORE } from "@mocks/reservationMockData";
 
 const COMPLETE_REDIRECT_DELAY = 2000;
 
@@ -21,8 +20,8 @@ const INITIAL_FORM = {
 const ReservationPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [form, setForm] = useState(INITIAL_FORM);
-  const [storeName, setStoreName] = useState(location.state?.storeName ?? "");
+  const [form, setForm] = useState(location.state?.form ?? INITIAL_FORM);
+  const [storeName] = useState(location.state?.storeName ?? "");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
@@ -40,7 +39,9 @@ const ReservationPage = () => {
   }, []);
 
   const handleSelectStore = () => {
-    setStoreName((prev) => prev || MOCK_SELECTED_STORE);
+    navigate("/care/reservation/stores", {
+      state: { form, storeName },
+    });
   };
 
   const handleSubmit = (event) => {
