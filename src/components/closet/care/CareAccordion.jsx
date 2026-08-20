@@ -18,8 +18,8 @@ const CareAccordion = ({ title, items }) => {
 
       {isOpen && (
         <Panel>
-          {items.map((item) => (
-            <Item key={item}>{item}</Item>
+          {(items || []).map((item, index) => (
+            <Item key={`${index}-${item}`}>{item}</Item>
           ))}
         </Panel>
       )}

@@ -6,8 +6,9 @@ import CareAccordion from "@components/closet/care/CareAccordion";
 import CareChecklist from "@components/closet/care/CareChecklist";
 import CareCenterCta from "@components/closet/care/CareCenterCta";
 import useMemberProfile from "@hooks/useMemberProfile";
-import { getCareGuideByMaterial } from "@mocks/careGuideMockData";
+import { buildCareGuideView } from "@utils/careGuideMappers";
 import { mapProduct } from "@utils/productMappers";
+import { getCareGuides } from "@apis/careGuides";
 import { getProduct } from "@apis/products";
 
 const CareGuidePage = () => {
@@ -15,22 +16,43 @@ const CareGuidePage = () => {
   const { nickname } = useMemberProfile();
   const [requestId, setRequestId] = useState(productId);
   const [product, setProduct] = useState(null);
+  const [guide, setGuide] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [guideError, setGuideError] = useState(false);
 
   if (productId !== requestId) {
     setRequestId(productId);
     setProduct(null);
+    setGuide(null);
     setIsLoading(true);
     setNotFound(false);
+    setGuideError(false);
   }
 
   useEffect(() => {
     let mounted = true;
 
     getProduct(productId)
-      .then((data) => {
-        if (mounted) setProduct(mapProduct(data));
+      .then(async (data) => {
+        const mappedProduct = mapProduct(data);
+        if (!mounted) return;
+
+        setProduct(mappedProduct);
+
+        try {
+          const guides = await getCareGuides({
+            material: mappedProduct.material,
+          });
+          if (!mounted) return;
+          setGuide(
+            buildCareGuideView(guides, { material: mappedProduct.material }),
+          );
+        } catch {
+          if (!mounted) return;
+          setGuideError(true);
+          setGuide(null);
+        }
       })
       .catch(() => {
         if (mounted) setNotFound(true);
@@ -43,8 +65,6 @@ const CareGuidePage = () => {
       mounted = false;
     };
   }, [productId]);
-
-  const guide = getCareGuideByMaterial(product?.material);
 
   if (isLoading) {
     return (
@@ -64,6 +84,15 @@ const CareGuidePage = () => {
     );
   }
 
+  if (guideError) {
+    return (
+      <PageWrapper>
+        <PageHeader title="케어 가이드" backTo={`/closet/${productId}`} />
+        <EmptyState>케어 가이드를 불러오지 못했어요.</EmptyState>
+      </PageWrapper>
+    );
+  }
+
   return (
     <PageWrapper>
       <PageHeader title="케어 가이드" backTo={`/closet/${productId}`} />
@@ -75,36 +104,54 @@ const CareGuidePage = () => {
           관리법을 꼼꼼하게 알려드릴게요
         </Headline>
 
-        <Section>
-          <SectionTitle>일상 관리 가이드</SectionTitle>
-          <AccordionList>
-            <CareAccordion
-              title={`소재별 기본 관리 원칙: ${guide.material}`}
-              items={guide.materialTips}
-            />
-            <CareAccordion title="바로 챙기면 좋을 습관" items={guide.habits} />
-          </AccordionList>
-        </Section>
+        {guide?.isEmpty ? (
+          <EmptyState $inline>등록된 케어 가이드가 아직 없어요.</EmptyState>
+        ) : (
+          <>
+            {guide?.dailyGuides?.length > 0 && (
+              <Section>
+                <SectionTitle>일상 관리 가이드</SectionTitle>
+                <AccordionList>
+                  {guide.dailyGuides.map((item) => (
+                    <CareAccordion
+                      key={item.id}
+                      title={item.title}
+                      items={item.items}
+                    />
+                  ))}
+                </AccordionList>
+              </Section>
+            )}
 
-        <CareChecklist
-          title="보관 및 사용 전후 체크리스트"
-          items={guide.checklist}
-        />
-
-        <Section>
-          <SectionTitle>계절별 관리 주의사항</SectionTitle>
-          <AccordionList>
-            {guide.seasonal.map((item) => (
-              <CareAccordion
-                key={item.id}
-                title={item.title}
-                items={item.items}
+            {guide?.checklist?.length > 0 && (
+              <CareChecklist
+                title="보관 및 사용 전후 체크리스트"
+                items={guide.checklist}
               />
-            ))}
-          </AccordionList>
-        </Section>
+            )}
 
-        <CareCenterCta href={guide.asCenterUrl} />
+            {guide?.seasonalGuides?.length > 0 && (
+              <Section>
+                <SectionTitle>계절별 관리 주의사항</SectionTitle>
+                <AccordionList>
+                  {guide.seasonalGuides.map((item) => (
+                    <CareAccordion
+                      key={item.id}
+                      title={
+                        item.season
+                          ? `${item.season} · ${item.title}`
+                          : item.title
+                      }
+                      items={item.items}
+                    />
+                  ))}
+                </AccordionList>
+              </Section>
+            )}
+          </>
+        )}
+
+        <CareCenterCta href={guide?.asCenterUrl} />
       </Main>
     </PageWrapper>
   );
@@ -155,12 +202,20 @@ const AccordionList = styled.div`
 `;
 
 const EmptyState = styled.p`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 4rem 2rem;
+  ${({ $inline }) =>
+    $inline
+      ? `
+    margin: 0;
+    padding: 2.4rem 0;
+  `
+      : `
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 4rem 2rem;
+  `}
   font-size: 1.4rem;
   color: var(--color-mediumgray);
 `;
