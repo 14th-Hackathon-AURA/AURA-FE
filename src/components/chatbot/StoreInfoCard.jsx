@@ -4,16 +4,9 @@ import { formatStoreDistance } from "@utils/storeMappers";
 
 const StoreInfoCard = ({ store }) => {
   const handleMapClick = () => {
-    if (store.mapSearchUrl) {
-      window.open(store.mapSearchUrl, "_blank", "noopener,noreferrer");
-      return;
-    }
-
-    const query = encodeURIComponent(
-      `${store.name || ""} ${store.address || ""}`.trim(),
-    );
+    const query = encodeURIComponent(store.address || "");
     window.open(
-      `https://map.naver.com/p/search/${query}`,
+      `https://map.kakao.com/?q=${query}`,
       "_blank",
       "noopener,noreferrer",
     );
