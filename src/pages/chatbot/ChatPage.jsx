@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import ChatBubble from "@components/chatbot/ChatBubble";
 import ChatInputBar from "@components/chatbot/ChatInputBar";
+import Button from "@components/common/Button";
 import useMemberProfile from "@hooks/useMemberProfile";
 import { sendChatMessage } from "@apis/chat";
 
 const ChatPage = () => {
+  const navigate = useNavigate();
   const { nickname } = useMemberProfile();
   const [messages, setMessages] = useState([]);
   const [sessionId, setSessionId] = useState(null);
@@ -43,7 +46,9 @@ const ChatPage = () => {
         {
           id: Date.now() + 1,
           role: "ai",
-          text: detail || "죄송해요, 답변을 가져오지 못했어요. 잠시 후 다시 시도해주세요.",
+          text:
+            detail ||
+            "죄송해요, 답변을 가져오지 못했어요. 잠시 후 다시 시도해주세요.",
         },
       ]);
     } finally {
@@ -63,6 +68,12 @@ const ChatPage = () => {
               <br />
               무엇이든 물어보세요
             </Greeting>
+            <VisitCardButton
+              type="button"
+              onClick={() => navigate("/chatbot/store-visit")}
+            >
+              방문 카드 목록
+            </VisitCardButton>
           </EmptyState>
         ) : (
           <MessageList>
@@ -127,4 +138,13 @@ const MessageList = styled.div`
   flex-direction: column;
   gap: 1.6rem;
   padding: 1.6rem 0;
+`;
+
+const VisitCardButton = styled(Button)`
+  align-self: center;
+  width: auto;
+  padding: 1.2rem 2.4rem;
+  border-radius: 0.2rem;
+  font-size: 1.2rem;
+  font-weight: 400;
 `;
