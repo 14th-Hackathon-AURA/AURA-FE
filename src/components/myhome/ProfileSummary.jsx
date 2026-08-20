@@ -75,6 +75,7 @@ const JoinedAt = styled.p`
 
 const EditButton = styled(Button)`
   flex-shrink: 0;
+  align-self: center;
   width: 11.2rem;
   height: 3.3rem;
   padding: 1.2rem 2.4rem;
