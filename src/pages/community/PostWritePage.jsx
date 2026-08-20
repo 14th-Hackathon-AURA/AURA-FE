@@ -53,7 +53,10 @@ const PostWritePage = () => {
         <Divider />
 
         <FieldLabel>이미지 업로드하기</FieldLabel>
-        <ImageUploadField previewUrl={imagePreviewUrl} onChange={handleImageChange} />
+        <ImageUploadField
+          previewUrl={imagePreviewUrl}
+          onChange={handleImageChange}
+        />
 
         <TagSection>
           <TagSectionHeader>
@@ -69,6 +72,7 @@ const PostWritePage = () => {
             <ProductTagRow
               name={taggedProduct.name}
               sub={`${taggedProduct.category} · ${taggedProduct.registeredLabel}`}
+              image={taggedProduct.image}
               onRemove={removeTag}
             />
           ) : (
@@ -90,8 +94,8 @@ const PostWritePage = () => {
         </SubmitButton>
 
         <Disclaimer>
-          ⚠ 이 게시물에 포함된 관리·케어 경험은 개인적인 사용 경험입니다. 공식 관리 지침이나 전문 수선
-          판단을 대체하지 않습니다.
+          ⚠ 이 게시물에 포함된 관리·케어 경험은 개인적인 사용 경험입니다. 공식
+          관리 지침이나 전문 수선 판단을 대체하지 않습니다.
         </Disclaimer>
       </Main>
 

@@ -49,7 +49,12 @@ export const mapPost = (apiPost) => {
     content: apiPost.body,
     images,
     taggedProduct: taggedProductCard
-      ? { id: taggedProductCard.id, name: taggedProductCard.name, brand: taggedProductCard.brand }
+      ? {
+          id: taggedProductCard.id,
+          name: taggedProductCard.name,
+          brand: taggedProductCard.brand,
+          image: taggedProductCard.image || taggedProductCard.image_url || null,
+        }
       : null,
     likeCount: apiPost.like_count,
     liked: apiPost.liked_by_me,

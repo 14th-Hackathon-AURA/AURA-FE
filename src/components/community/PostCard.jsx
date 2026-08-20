@@ -2,11 +2,14 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import GradeBadge from "./GradeBadge";
 import PostStats from "./PostStats";
+import defaultProfile from "@assets/icons/default-profile.svg";
 
 const PostCard = ({ post }) => (
   <Card to={`/community/${post.id}`}>
     <Row>
-      <Avatar />
+      <Avatar>
+        <img src={post.author.avatarUrl || defaultProfile} alt="" />
+      </Avatar>
       <Meta>
         <NicknameRow>
           <Nickname>{post.author.nickname}</Nickname>
@@ -21,7 +24,11 @@ const PostCard = ({ post }) => (
     <Content>{post.title}</Content>
 
     <StatsRow>
-      <PostStats likeCount={post.likeCount} commentCount={post.commentCount} liked={post.liked} />
+      <PostStats
+        likeCount={post.likeCount}
+        commentCount={post.commentCount}
+        liked={post.liked}
+      />
     </StatsRow>
   </Card>
 );
@@ -49,7 +56,14 @@ const Avatar = styled.div`
   width: 4.8rem;
   height: 4.8rem;
   border-radius: 999px;
+  overflow: hidden;
   background: var(--color-avatar-bg);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const Meta = styled.div`

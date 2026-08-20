@@ -7,17 +7,21 @@ import ProductTagRow from "@components/community/ProductTagRow";
 import CommentItem from "@components/community/CommentItem";
 import CommentInput from "@components/community/CommentInput";
 import useCommunityStore from "@hooks/community/useCommunityStore";
+import defaultProfile from "@assets/icons/default-profile.svg";
 
 const PostDetailPage = () => {
   const { postId } = useParams();
-  const { getPostById, toggleLike, addComment, isLoading } = useCommunityStore();
+  const { getPostById, toggleLike, addComment, isLoading } =
+    useCommunityStore();
   const post = getPostById(postId);
 
   if (!post) {
     return (
       <PageWrapper>
         <PageHeader title="게시물 상세" backTo="/community" />
-        <EmptyState>{isLoading ? "불러오는 중..." : "게시물을 찾을 수 없어요"}</EmptyState>
+        <EmptyState>
+          {isLoading ? "불러오는 중..." : "게시물을 찾을 수 없어요"}
+        </EmptyState>
       </PageWrapper>
     );
   }
@@ -29,7 +33,9 @@ const PostDetailPage = () => {
       <Main>
         <Section>
           <AuthorRow>
-            <Avatar />
+            <Avatar>
+              <img src={post.author.avatarUrl || defaultProfile} alt="" />
+            </Avatar>
             <AuthorMeta>
               <NicknameRow>
                 <Nickname>{post.author.nickname}</Nickname>
@@ -48,7 +54,11 @@ const PostDetailPage = () => {
             <ImageGrid>
               {post.images.map((src, index) => (
                 <ImageBox key={index}>
-                  {src ? <img src={src} alt="" /> : <PlaceholderLabel>Image</PlaceholderLabel>}
+                  {src ? (
+                    <img src={src} alt="" />
+                  ) : (
+                    <PlaceholderLabel>Image</PlaceholderLabel>
+                  )}
                 </ImageBox>
               ))}
             </ImageGrid>
@@ -57,7 +67,11 @@ const PostDetailPage = () => {
           {post.taggedProduct && (
             <TagSection>
               <TagLabel>태그된 제품</TagLabel>
-              <ProductTagRow name={post.taggedProduct.name} sub={post.taggedProduct.brand} />
+              <ProductTagRow
+                name={post.taggedProduct.name}
+                sub={post.taggedProduct.brand}
+                image={post.taggedProduct.image}
+              />
             </TagSection>
           )}
         </Section>
@@ -76,13 +90,20 @@ const PostDetailPage = () => {
 
           <CommentList>
             {post.comments.map((comment) => (
-              <CommentItem key={comment.id} nickname={comment.nickname} content={comment.content} />
+              <CommentItem
+                key={comment.id}
+                nickname={comment.nickname}
+                content={comment.content}
+                avatarUrl={comment.avatarUrl}
+              />
             ))}
           </CommentList>
         </Section>
       </Main>
 
-      <CommentInput onSubmit={(text) => addComment(post.id, text).catch(() => {})} />
+      <CommentInput
+        onSubmit={(text) => addComment(post.id, text).catch(() => {})}
+      />
     </PageWrapper>
   );
 };
@@ -122,7 +143,14 @@ const Avatar = styled.div`
   width: 4.8rem;
   height: 4.8rem;
   border-radius: 999px;
+  overflow: hidden;
   background: var(--color-avatar-bg);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const AuthorMeta = styled.div`

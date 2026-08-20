@@ -107,7 +107,7 @@ const StoreVisitDetailPage = () => {
           type="button"
           onClick={() => navigate("/chatbot/store-list", { state: { cardId } })}
         >
-          매장 예약하기
+          근처 매장 보기
         </ReserveButton>
       </Main>
     </PageWrapper>

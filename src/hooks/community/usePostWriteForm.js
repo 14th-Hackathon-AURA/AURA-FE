@@ -41,6 +41,7 @@ const usePostWriteForm = () => {
           name: product.name,
           category: product.category,
           registeredLabel: formatRegisteredLabel(product.created_at),
+          image: product.image || null,
         })),
       );
     } catch {
@@ -91,7 +92,10 @@ const usePostWriteForm = () => {
 
   useEffect(() => {
     if (!isSubmitted) return;
-    const timer = setTimeout(() => navigate("/community"), SUBMIT_COMPLETE_REDIRECT_DELAY);
+    const timer = setTimeout(
+      () => navigate("/community"),
+      SUBMIT_COMPLETE_REDIRECT_DELAY,
+    );
     return () => clearTimeout(timer);
   }, [isSubmitted, navigate]);
 

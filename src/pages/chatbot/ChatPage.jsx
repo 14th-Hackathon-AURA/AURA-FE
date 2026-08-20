@@ -5,6 +5,7 @@ import PageHeader from "@components/common/PageHeader";
 import ChatBubble from "@components/chatbot/ChatBubble";
 import ChatInputBar from "@components/chatbot/ChatInputBar";
 import Button from "@components/common/Button";
+import CompleteOverlay from "@components/common/CompleteOverlay";
 import useMemberProfile from "@hooks/useMemberProfile";
 import { sendChatMessage } from "@apis/chat";
 
@@ -14,11 +15,19 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [sessionId, setSessionId] = useState(null);
   const [isSending, setIsSending] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
   const listEndRef = useRef(null);
 
   useEffect(() => {
     listEndRef.current?.scrollIntoView({ block: "end" });
   }, [messages]);
+
+  useEffect(() => {
+    if (!toastMessage) return undefined;
+
+    const timer = window.setTimeout(() => setToastMessage(null), 1500);
+    return () => window.clearTimeout(timer);
+  }, [toastMessage]);
 
   const handleSend = async (text) => {
     const userMessage = { id: Date.now(), role: "user", text };
@@ -58,7 +67,7 @@ const ChatPage = () => {
 
   return (
     <PageWrapper>
-      <PageHeader title="AI 챗봇" />
+      <PageHeader title="AI 챗봇" backTo="/closet" />
 
       <Body>
         {messages.length === 0 ? (
@@ -85,6 +94,7 @@ const ChatPage = () => {
                 action={message.action}
                 recommendedProducts={message.recommendedProducts}
                 sessionId={sessionId}
+                onToast={setToastMessage}
               />
             ))}
             <div ref={listEndRef} />
@@ -93,6 +103,13 @@ const ChatPage = () => {
       </Body>
 
       <ChatInputBar onSubmit={handleSend} disabled={isSending} />
+
+      {toastMessage && (
+        <CompleteOverlay
+          message={toastMessage}
+          onClose={() => setToastMessage(null)}
+        />
+      )}
     </PageWrapper>
   );
 };
@@ -100,6 +117,7 @@ const ChatPage = () => {
 export default ChatPage;
 
 const PageWrapper = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;

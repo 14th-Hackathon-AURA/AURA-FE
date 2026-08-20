@@ -1,8 +1,11 @@
 import styled from "styled-components";
+import defaultProfile from "@assets/icons/default-profile.svg";
 
-const CommentItem = ({ nickname, content }) => (
+const CommentItem = ({ nickname, content, avatarUrl }) => (
   <Row>
-    <Avatar />
+    <Avatar>
+      <img src={avatarUrl || defaultProfile} alt="" />
+    </Avatar>
     <Text>
       <Nickname>{nickname}</Nickname>
       <Content>{content}</Content>
@@ -24,7 +27,14 @@ const Avatar = styled.div`
   width: 4.8rem;
   height: 4.8rem;
   border-radius: 999px;
+  overflow: hidden;
   background: var(--color-avatar-bg);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const Text = styled.div`

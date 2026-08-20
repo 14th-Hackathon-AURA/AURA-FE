@@ -4,6 +4,7 @@ import moreWhiteIcon from "@assets/icons/closet/more-white.svg";
 import moreGrayIcon from "@assets/icons/closet/more-gray.svg";
 import verifiedIcon from "@assets/icons/closet/verified.svg";
 import ClosetActionMenu from "./ClosetActionMenu";
+import defaultBagImage from "@assets/images/default-bag.png";
 
 const ClosetItemCard = ({
   item,
@@ -22,11 +23,7 @@ const ClosetItemCard = ({
     <Card>
       <CardLink to={`/closet/${item.id}`}>
         <ImageWrap>
-          {item.image ? (
-            <Image src={item.image} alt={item.name} />
-          ) : (
-            <ImagePlaceholder aria-hidden="true" />
-          )}
+          <Image src={item.image || defaultBagImage} alt={item.name} />
           <Gradient />
 
           {item.verified && (
@@ -87,12 +84,6 @@ const Image = styled.img`
   height: 100%;
   aspect-ratio: 1 / 1;
   object-fit: contain;
-  background: var(--color-soft-gray);
-`;
-
-const ImagePlaceholder = styled.div`
-  width: 100%;
-  aspect-ratio: 1 / 1;
   background: var(--color-soft-gray);
 `;
 

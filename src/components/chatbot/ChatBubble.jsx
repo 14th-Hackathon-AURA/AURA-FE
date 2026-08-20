@@ -4,7 +4,14 @@ import Button from "@components/common/Button";
 import { sendChatMessage } from "@apis/chat";
 import { createVisitCard } from "@apis/visitCards";
 
-const ChatBubble = ({ role, text, action, recommendedProducts, sessionId }) => {
+const ChatBubble = ({
+  role,
+  text,
+  action,
+  recommendedProducts,
+  sessionId,
+  onToast,
+}) => {
   if (role === "user") {
     return (
       <UserRow>
@@ -24,9 +31,9 @@ const ChatBubble = ({ role, text, action, recommendedProducts, sessionId }) => {
       } else {
         await createVisitCard({ styleCode: productCode });
       }
-      alert("방문 카드로 저장했어요.");
+      onToast?.("방문 카드로 저장했어요.");
     } catch {
-      alert("저장에 실패했어요. 다시 시도해주세요.");
+      onToast?.("저장에 실패했어요. 다시 시도해주세요.");
     }
   };
 
@@ -163,7 +170,9 @@ const SaveButton = styled.button`
   border: 1px solid var(--color-primary, #1f2937);
   border-radius: 0.4rem;
   font-size: 1.1rem;
+  color: var(--color-primary, #1f2937);
   background: transparent;
+  cursor: pointer;
 `;
 
 const ActionButton = styled(Button)`

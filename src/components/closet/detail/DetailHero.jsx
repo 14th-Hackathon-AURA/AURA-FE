@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "@components/common/Button";
+import defaultBagImage from "@assets/images/default-bag.png";
 
 const formatPrice = (price) => {
   if (price == null || price === "") return "-";
@@ -10,11 +11,7 @@ const formatPrice = (price) => {
 const DetailHero = ({ product }) => (
   <Section>
     <ImageBox>
-      {product.image ? (
-        <Image src={product.image} alt={product.name} />
-      ) : (
-        <ImagePlaceholder aria-hidden="true" />
-      )}
+      <Image src={product.image || defaultBagImage} alt={product.name} />
     </ImageBox>
 
     <Meta>
@@ -49,12 +46,6 @@ const Image = styled.img`
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: contain;
-  background: var(--color-soft-gray);
-`;
-
-const ImagePlaceholder = styled.div`
-  width: 100%;
-  aspect-ratio: 1 / 1;
   background: var(--color-soft-gray);
 `;
 

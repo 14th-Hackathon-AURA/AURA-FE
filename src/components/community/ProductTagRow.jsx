@@ -1,8 +1,9 @@
 import styled from "styled-components";
+import defaultBagImage from "@assets/images/default-bag.png";
 
-const ProductTagRow = ({ name, sub, onRemove }) => (
+const ProductTagRow = ({ name, sub, image, onRemove }) => (
   <Row>
-    <Thumb>Image</Thumb>
+    <Thumb src={image || defaultBagImage} alt="" />
     <Info>
       <Name>{name}</Name>
       <Sub>{sub}</Sub>
@@ -24,17 +25,13 @@ const Row = styled.div`
   width: 100%;
 `;
 
-const Thumb = styled.div`
+const Thumb = styled.img`
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 4.8rem;
-  height: 6.4rem;
+  height: auto;
   border-radius: 0.4rem;
+  object-fit: cover;
   background: #f7f7f7;
-  font-size: 1.1rem;
-  color: #9ca3af;
 `;
 
 const Info = styled.div`
