@@ -1,8 +1,14 @@
 import { useState } from "react";
 import styled from "styled-components";
 import Button from "@components/common/Button";
+import defaultBagImage from "@assets/images/default-bag.png";
 
-const ProductTagModal = ({ items, initialSelectedId = null, onCancel, onConfirm }) => {
+const ProductTagModal = ({
+  items,
+  initialSelectedId = null,
+  onCancel,
+  onConfirm,
+}) => {
   const [selectedId, setSelectedId] = useState(initialSelectedId);
 
   const handleConfirm = () => {
@@ -19,8 +25,12 @@ const ProductTagModal = ({ items, initialSelectedId = null, onCancel, onConfirm 
           {items.map((item) => {
             const checked = item.id === selectedId;
             return (
-              <ItemRow key={item.id} type="button" onClick={() => setSelectedId(item.id)}>
-                <Thumb />
+              <ItemRow
+                key={item.id}
+                type="button"
+                onClick={() => setSelectedId(item.id)}
+              >
+                <Thumb src={item.image || defaultBagImage} alt="" />
                 <Info>
                   <Name>{item.name}</Name>
                   <Sub>
@@ -40,7 +50,11 @@ const ProductTagModal = ({ items, initialSelectedId = null, onCancel, onConfirm 
           <CancelButton type="button" $variant="outline" onClick={onCancel}>
             취소
           </CancelButton>
-          <ConfirmButton type="button" onClick={handleConfirm} disabled={!selectedId}>
+          <ConfirmButton
+            type="button"
+            onClick={handleConfirm}
+            disabled={!selectedId}
+          >
             태그 추가
           </ConfirmButton>
         </Actions>
@@ -99,11 +113,12 @@ const ItemRow = styled.button`
   background: var(--color-soft-gray);
 `;
 
-const Thumb = styled.div`
+const Thumb = styled.img`
   flex-shrink: 0;
   width: 4.8rem;
   height: 4.8rem;
   border-radius: 999px;
+  object-fit: cover;
   background: var(--color-avatar-bg);
 `;
 
@@ -140,7 +155,8 @@ const Checkbox = styled.span`
   height: 1.6rem;
   border-radius: 0.3rem;
   border: 1px solid var(--color-stroke-gray);
-  background: ${({ $checked }) => ($checked ? "var(--color-primary)" : "var(--color-white)")};
+  background: ${({ $checked }) =>
+    $checked ? "var(--color-primary)" : "var(--color-white)"};
 `;
 
 const CheckLabel = styled.span`
