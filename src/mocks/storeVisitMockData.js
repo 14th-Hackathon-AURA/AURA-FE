@@ -52,3 +52,24 @@ export const getStoreVisitCardById = (id) =>
 
 export const formatVisitNeedsSummary = (template, nickname) =>
   template.replaceAll("{name}", nickname || "00");
+
+export const MOCK_CERTIFIED_STORES = [
+  {
+    id: 1,
+    name: "MCM 롯데백화점 본점",
+    address: "서울 중구 남대문로 81",
+    isOpen: true,
+    hours: "10:00-20:00",
+    distanceKm: 1.2,
+    phone: "02-759-2000",
+  },
+  {
+    id: 2,
+    name: "MCM 롯데백화점 본점",
+    address: "서울 중구 남대문로 81",
+    isOpen: true,
+    hours: "10:00-20:00",
+    distanceKm: 1.2,
+    phone: "02-759-2000",
+  },
+];
