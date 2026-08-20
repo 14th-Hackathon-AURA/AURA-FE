@@ -1,9 +1,10 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import kebabMenuIcon from "@assets/icons/kebab-menu.svg";
 import trashIcon from "@assets/icons/trash.svg";
 
 const StoreVisitCard = ({ card, isMenuOpen, onToggleMenu, onDelete }) => (
-  <CardArticle>
+  <Card to={`/chatbot/store-visit/${card.id}`}>
     <CardTop>
       <Thumbnail src={card.image} alt={card.name} />
 
@@ -14,17 +15,30 @@ const StoreVisitCard = ({ card, isMenuOpen, onToggleMenu, onDelete }) => (
             <MenuButton
               type="button"
               aria-label={`${card.name} 메뉴 열기`}
-              onClick={(event) => onToggleMenu(event, card.id)}
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={(event) => {
+                event.preventDefault();
+                onToggleMenu(event, card.id);
+              }}
             >
               <MenuIcon src={kebabMenuIcon} alt="" />
             </MenuButton>
 
             {isMenuOpen && (
-              <Dropdown role="menu" aria-label={`${card.name} 메뉴`}>
+              <Dropdown
+                role="menu"
+                aria-label={`${card.name} 메뉴`}
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={(event) => event.preventDefault()}
+              >
                 <DropdownButton
                   type="button"
                   role="menuitem"
-                  onClick={() => onDelete(card.id)}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onDelete(card.id);
+                  }}
                 >
                   <DropdownLabel>삭제하기</DropdownLabel>
                   <TrashIcon src={trashIcon} alt="" />
@@ -43,12 +57,12 @@ const StoreVisitCard = ({ card, isMenuOpen, onToggleMenu, onDelete }) => (
         <Tag key={tag}>{tag}</Tag>
       ))}
     </TagList>
-  </CardArticle>
+  </Card>
 );
 
 export default StoreVisitCard;
 
-const CardArticle = styled.article`
+const Card = styled(Link)`
   position: relative;
   display: flex;
   flex-direction: column;

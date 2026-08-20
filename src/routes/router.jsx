@@ -16,6 +16,7 @@ import ProductDetailPage from "@pages/closet/ProductDetailPage";
 import CareGuidePage from "@pages/closet/CareGuidePage";
 import ChatPage from "@pages/chatbot/ChatPage";
 import StoreVisitPage from "@pages/chatbot/StoreVisitPage";
+import StoreVisitDetailPage from "@pages/chatbot/StoreVisitDetailPage";
 import CarePage from "@pages/care/CarePage";
 import DiagnosisHistoryPage from "@pages/care/DiagnosisHistoryPage";
 import DiagnosisResultPage from "@pages/care/DiagnosisResultPage";
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: "/chatbot/store-visit",
         element: <StoreVisitPage />,
+      },
+      {
+        path: "/chatbot/store-visit/:cardId",
+        element: <StoreVisitDetailPage />,
       },
       {
         path: "/community",
