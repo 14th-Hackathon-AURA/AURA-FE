@@ -15,6 +15,11 @@ import ProductRegisterPage from "@pages/closet/ProductRegisterPage";
 import ProductDetailPage from "@pages/closet/ProductDetailPage";
 import CareGuidePage from "@pages/closet/CareGuidePage";
 import ChatPage from "@pages/chatbot/ChatPage";
+import CarePage from "@pages/care/CarePage";
+import DiagnosisHistoryPage from "@pages/care/DiagnosisHistoryPage";
+import DiagnosisResultPage from "@pages/care/DiagnosisResultPage";
+import ReservationPage from "@pages/care/ReservationPage";
+import StoreSelectPage from "@pages/care/StoreSelectPage";
 
 const router = createBrowserRouter([
   {
@@ -86,6 +91,26 @@ const router = createBrowserRouter([
       {
         path: "/closet/:productId/care",
         element: <CareGuidePage />,
+      },
+      {
+        path: "/care",
+        element: <CarePage />,
+      },
+      {
+        path: "/care/history",
+        element: <DiagnosisHistoryPage />,
+      },
+      {
+        path: "/care/result",
+        element: <DiagnosisResultPage />,
+      },
+      {
+        path: "/care/reservation",
+        element: <ReservationPage />,
+      },
+      {
+        path: "/care/reservation/stores",
+        element: <StoreSelectPage />,
       },
     ],
   },

@@ -15,4 +15,7 @@
   --color-avatar-bg: #e5e5e5;
   --color-input-border: #f1f1f1;
   --color-placeholder-gray: #908c94;
+  --color-warn: #c49d1f;
+  --color-safe: #1f7c3e;
+  --color-danger: #872355;
 }

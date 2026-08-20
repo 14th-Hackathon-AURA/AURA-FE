@@ -1,9 +1,16 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import cameraPlusIcon from "@assets/icons/closet/camera-plus.svg";
+import Button from "@components/common/Button";
 import UploadActionMenu from "@components/closet/UploadActionMenu";
+import cameraPlusIcon from "@assets/icons/care/camera-plus.svg";
 
-const ReceiptUploader = ({ previewUrl, onChange }) => {
+const DiagnosisUpload = ({
+  previewUrl,
+  isDiagnosing,
+  onImageChange,
+  onStartDiagnosis,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
@@ -18,7 +25,7 @@ const ReceiptUploader = ({ previewUrl, onChange }) => {
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
-    if (file) onChange(file);
+    if (file) onImageChange(file);
     event.target.value = "";
     setIsMenuOpen(false);
   };
@@ -33,28 +40,37 @@ const ReceiptUploader = ({ previewUrl, onChange }) => {
     galleryInputRef.current?.click();
   };
 
+  const handleOpenMenu = () => {
+    if (isDiagnosing) return;
+    setIsMenuOpen((prev) => !prev);
+  };
+
   return (
     <Section>
-      <Heading>
-        제품 등록을 위해 <br /> 보증서 혹은 영수증을 업로드 해주세요
-      </Heading>
-      <SubText>걱정마세요, 구매 정보는 제품 등록용으로만 사용됩니다.</SubText>
+      <TitleRow>
+        <Title>AI 상태 진단</Title>
+        <HistoryButton to="/care/history">지난 기록 보기</HistoryButton>
+      </TitleRow>
+
+      <Description>
+        구매한 제품의 현재 상태를 AI가 사진으로 확인해 드려요
+      </Description>
 
       <UploadWrap onPointerDown={(event) => event.stopPropagation()}>
         <UploadBox
           type="button"
-          aria-label="보증서 또는 영수증 업로드"
+          aria-label="진단할 제품 사진 업로드"
           aria-expanded={isMenuOpen}
-          onClick={() => setIsMenuOpen((prev) => !prev)}
+          onClick={handleOpenMenu}
         >
           {previewUrl ? (
-            <Preview src={previewUrl} alt="업로드한 영수증" />
+            <Preview src={previewUrl} alt="업로드한 제품 사진" />
           ) : (
             <Placeholder>
               <PlusIcon src={cameraPlusIcon} alt="" />
               <PlaceholderText>
-                구매한 제품의 보증서
-                <br /> 또는 영수증을 업로드 해주세요
+                진단할 제품의 사진을 <br />
+                업로드 해주세요
               </PlaceholderText>
             </Placeholder>
           )}
@@ -82,16 +98,14 @@ const ReceiptUploader = ({ previewUrl, onChange }) => {
         />
       </UploadWrap>
 
-      <HelpText>
-        JPG, PNG 형식의 텍스트가 잘 보이는 사진을 올려주세요.
-        <br />
-        사진이 없다면, 아래 정보칸에서 직접 작성할 수 있어요
-      </HelpText>
+      <StartButton type="button" onClick={onStartDiagnosis}>
+        AI 진단 시작하기
+      </StartButton>
     </Section>
   );
 };
 
-export default ReceiptUploader;
+export default DiagnosisUpload;
 
 const Section = styled.section`
   display: flex;
@@ -99,16 +113,32 @@ const Section = styled.section`
   width: 100%;
 `;
 
-const Heading = styled.h2`
+const TitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+`;
+
+const Title = styled.h2`
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  line-height: 1.5;
   color: var(--color-black);
 `;
 
-const SubText = styled.p`
-  margin: 0.8rem 0 0;
+const HistoryButton = styled(Link)`
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-gray);
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+`;
+
+const Description = styled.p`
+  margin: 1.6rem 0;
   font-size: 1.2rem;
   font-weight: 400;
   line-height: 1.5;
@@ -118,7 +148,6 @@ const SubText = styled.p`
 const UploadWrap = styled.div`
   position: relative;
   width: 100%;
-  margin-top: 1.6rem;
 `;
 
 const UploadBox = styled.button`
@@ -161,10 +190,11 @@ const HiddenInput = styled.input`
   display: none;
 `;
 
-const HelpText = styled.p`
-  margin: 1.6rem 0;
-  font-size: 1.1rem;
+const StartButton = styled(Button)`
+  width: 100%;
+  margin-top: 1.6rem;
+  padding: 1.2rem 2.4rem;
+  border-radius: 0.2rem;
+  font-size: 1.4rem;
   font-weight: 400;
-  line-height: 1.5;
-  color: var(--color-black);
 `;
