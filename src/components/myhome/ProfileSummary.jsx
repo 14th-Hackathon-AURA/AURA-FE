@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "@components/common/Button";
+import defaultProfile from "@assets/icons/default-profile.svg";
 
 const ProfileSummary = ({ avatarUrl, nickname, joinedAt }) => (
   <Row>
     <Identity>
-      <Avatar>{avatarUrl && <img src={avatarUrl} alt="" />}</Avatar>
+      <Avatar>
+        <img src={avatarUrl || defaultProfile} alt="" />
+      </Avatar>
       <NameBlock>
         <Nickname>{nickname}</Nickname>
         <JoinedAt>{joinedAt}</JoinedAt>

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import avatarEditIcon from "@assets/icons/myhome/avatar-edit.svg";
+import defaultProfile from "@assets/icons/default-profile.svg";
 
 const ProfileImageEditor = ({ previewUrl, onChangeAvatar }) => {
   const handleFileChange = (event) => {
@@ -8,7 +9,9 @@ const ProfileImageEditor = ({ previewUrl, onChangeAvatar }) => {
 
   return (
     <Row>
-      <Avatar>{previewUrl && <img src={previewUrl} alt="프로필 이미지" />}</Avatar>
+      <Avatar>
+        <img src={previewUrl || defaultProfile} alt="프로필 이미지" />
+      </Avatar>
       <UploadButton>
         <input type="file" accept="image/*" onChange={handleFileChange} hidden />
         <img src={avatarEditIcon} alt="프로필 이미지 변경" />
