@@ -70,6 +70,7 @@ const PostDetailPage = () => {
               <ProductTagRow
                 name={post.taggedProduct.name}
                 sub={post.taggedProduct.brand}
+                image={post.taggedProduct.image}
               />
             </TagSection>
           )}
