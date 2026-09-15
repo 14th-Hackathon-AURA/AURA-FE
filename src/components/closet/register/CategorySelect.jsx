@@ -17,7 +17,6 @@ const CategorySelect = ({
   emptyMessage,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const hasOptions = options.length > 0;
 
   const matchedOption = options
     .map((option) => ({
@@ -29,6 +28,11 @@ const CategorySelect = ({
   const selectedLabel = matchedOption?.label ?? (value || "");
   const isPlaceholder =
     matchedOption == null && (value === "" || value == null);
+
+  const visibleOptions = options.filter(
+    (option) => String(getOptionValue(option)) !== String(value),
+  );
+  const hasOptions = visibleOptions.length > 0;
 
   const handleSelect = (option) => {
     onChange(getOptionValue(option));
@@ -49,7 +53,7 @@ const CategorySelect = ({
         {isOpen && (
           <OptionsList>
             {hasOptions ? (
-              options.map((option) => {
+              visibleOptions.map((option) => {
                 const optionValue = getOptionValue(option);
                 const optionLabel = getOptionLabel(option);
 
