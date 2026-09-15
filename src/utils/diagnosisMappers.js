@@ -12,13 +12,9 @@ export const CONDITION_LEVEL = {
 
 export const DIAGNOSIS_YEAR_OPTIONS = [
   { value: "", label: "전체" },
-  "2026",
-  "2025",
-  "2024",
-  "2023",
-  "2022",
-  "2021",
-  "2020",
+  "2026년",
+  "2025년",
+  "2024년 이전",
 ];
 
 const CONDITION_UI = {
