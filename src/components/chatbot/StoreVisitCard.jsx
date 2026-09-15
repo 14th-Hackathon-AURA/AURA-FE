@@ -76,12 +76,12 @@ const Card = styled(Link)`
 
 const CardTop = styled.div`
   display: flex;
-  gap: 1.2rem;
+  gap: 1.4rem;
 `;
 
 const Thumbnail = styled.img`
-  width: 11rem;
-  height: 4.8rem;
+  width: 10rem;
+  height: auto;
   flex-shrink: 0;
   border-radius: 0.4rem;
   object-fit: cover;
@@ -160,7 +160,7 @@ const TrashIcon = styled.img`
 `;
 
 const Price = styled.p`
-  margin: 0.2rem 0 0;
+  margin: 0.8rem 0 0;
   font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.5;

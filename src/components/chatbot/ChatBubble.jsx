@@ -1,16 +1,13 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "@components/common/Button";
-import { sendChatMessage } from "@apis/chat";
-import { createVisitCard } from "@apis/visitCards";
 
 const ChatBubble = ({
   role,
   text,
   action,
   recommendedProducts,
-  sessionId,
-  onToast,
+  onSaveCard,
 }) => {
   if (role === "user") {
     return (
@@ -19,23 +16,6 @@ const ChatBubble = ({
       </UserRow>
     );
   }
-
-  const handleSaveCard = async (productCode) => {
-    try {
-      if (sessionId) {
-        await sendChatMessage({
-          sessionId,
-          message: "이 제품 카드로 저장해줘",
-          productCode,
-        });
-      } else {
-        await createVisitCard({ styleCode: productCode });
-      }
-      onToast?.("방문 카드로 저장했어요.");
-    } catch {
-      onToast?.("저장에 실패했어요. 다시 시도해주세요.");
-    }
-  };
 
   return (
     <AiRow>
@@ -54,7 +34,7 @@ const ChatBubble = ({
               </ProductInfo>
               <SaveButton
                 type="button"
-                onClick={() => handleSaveCard(product.style_code)}
+                onClick={() => onSaveCard?.(product.style_code)}
               >
                 카드 저장
               </SaveButton>
@@ -176,9 +156,12 @@ const SaveButton = styled.button`
 `;
 
 const ActionButton = styled(Button)`
-  width: 10rem;
-  padding: 1rem 1.2rem;
+  align-self: flex-start;
+  width: auto;
+  padding: 1.2rem 2.4rem;
   border-radius: 0.2rem;
   font-size: 1.2rem;
-  color: var(--color-ivory);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-white);
 `;

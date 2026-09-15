@@ -8,6 +8,7 @@ import Button from "@components/common/Button";
 import CompleteOverlay from "@components/common/CompleteOverlay";
 import useMemberProfile from "@hooks/useMemberProfile";
 import { sendChatMessage } from "@apis/chat";
+import { createVisitCard } from "@apis/visitCards";
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -29,6 +30,29 @@ const ChatPage = () => {
     return () => window.clearTimeout(timer);
   }, [toastMessage]);
 
+  const VISIT_CARD_SAVED_TEXT =
+    "카드 형식으로 정리를 완료했어요.\n다음을 눌러 확인해보세요.";
+
+  const buildAiMessage = (data) => {
+    const visitCard = data.visit_card;
+    const cardId = visitCard?.id;
+
+    return {
+      id: Date.now() + 1,
+      role: "ai",
+      text: visitCard ? VISIT_CARD_SAVED_TEXT : data.answer,
+      recommendedProducts: data.recommended_products || [],
+      action: visitCard
+        ? {
+            label: "방문 카드 확인",
+            to: cardId
+              ? `/chatbot/store-visit/${cardId}`
+              : "/chatbot/store-visit",
+          }
+        : undefined,
+    };
+  };
+
   const handleSend = async (text) => {
     const userMessage = { id: Date.now(), role: "user", text };
     setMessages((prev) => [...prev, userMessage]);
@@ -39,15 +63,7 @@ const ChatPage = () => {
 
       if (data.session_id) setSessionId(data.session_id);
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          role: "ai",
-          text: data.answer,
-          recommendedProducts: data.recommended_products || [],
-        },
-      ]);
+      setMessages((prev) => [...prev, buildAiMessage(data)]);
     } catch (error) {
       const detail = error.response?.data?.detail;
       setMessages((prev) => [
@@ -60,6 +76,44 @@ const ChatPage = () => {
             "죄송해요, 답변을 가져오지 못했어요. 잠시 후 다시 시도해주세요.",
         },
       ]);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleSaveCard = async (productCode) => {
+    setIsSending(true);
+
+    try {
+      if (sessionId) {
+        const data = await sendChatMessage({
+          sessionId,
+          message: "이 제품 카드로 저장해줘",
+          productCode,
+        });
+
+        if (data.session_id) setSessionId(data.session_id);
+        setMessages((prev) => [...prev, buildAiMessage(data)]);
+        return;
+      }
+
+      const card = await createVisitCard({ styleCode: productCode });
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: "ai",
+          text: VISIT_CARD_SAVED_TEXT,
+          action: {
+            label: "방문 카드 확인",
+            to: card?.id
+              ? `/chatbot/store-visit/${card.id}`
+              : "/chatbot/store-visit",
+          },
+        },
+      ]);
+    } catch {
+      setToastMessage("저장에 실패했어요. 다시 시도해주세요.");
     } finally {
       setIsSending(false);
     }
@@ -93,8 +147,7 @@ const ChatPage = () => {
                 text={message.text}
                 action={message.action}
                 recommendedProducts={message.recommendedProducts}
-                sessionId={sessionId}
-                onToast={setToastMessage}
+                onSaveCard={handleSaveCard}
               />
             ))}
             <div ref={listEndRef} />
