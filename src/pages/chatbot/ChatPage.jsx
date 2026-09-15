@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import ChatBubble, { ChatBubbleSkeleton } from "@components/chatbot/ChatBubble";
@@ -12,29 +12,49 @@ import { createVisitCard } from "@apis/visitCards";
 
 const CHAT_STORAGE_KEY = "aura_chat_state";
 const VISIT_CARD_ACTION_STATE = { from: "/chatbot" };
+const EMPTY_CHAT = { messages: [], sessionId: null };
 
 const readStoredChat = () => {
   try {
     const raw = sessionStorage.getItem(CHAT_STORAGE_KEY);
-    if (!raw) return { messages: [], sessionId: null };
+    if (!raw) return EMPTY_CHAT;
     const parsed = JSON.parse(raw);
     return {
       messages: Array.isArray(parsed.messages) ? parsed.messages : [],
       sessionId: parsed.sessionId ?? null,
     };
   } catch {
-    return { messages: [], sessionId: null };
+    return EMPTY_CHAT;
   }
+};
+
+const clearStoredChat = () => {
+  sessionStorage.removeItem(CHAT_STORAGE_KEY);
 };
 
 const ChatPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { nickname } = useMemberProfile();
-  const [messages, setMessages] = useState(() => readStoredChat().messages);
-  const [sessionId, setSessionId] = useState(() => readStoredChat().sessionId);
+  const [messages, setMessages] = useState(() => {
+    if (location.state?.resetChat) {
+      clearStoredChat();
+      return EMPTY_CHAT.messages;
+    }
+    return readStoredChat().messages;
+  });
+  const [sessionId, setSessionId] = useState(() => {
+    if (location.state?.resetChat) return EMPTY_CHAT.sessionId;
+    return readStoredChat().sessionId;
+  });
   const [isSending, setIsSending] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const listEndRef = useRef(null);
+
+  useEffect(() => {
+    if (!location.state?.resetChat) return;
+    navigate(".", { replace: true, state: null });
+  }, [location.state, navigate]);
 
   useEffect(() => {
     listEndRef.current?.scrollIntoView({ block: "end" });
