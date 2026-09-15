@@ -73,7 +73,7 @@ const ChatPage = () => {
         {messages.length === 0 ? (
           <EmptyState>
             <Greeting>
-              반가워요, {nickname}님
+              {nickname ? `반가워요, ${nickname}님` : "반가워요,"}
               <br />
               무엇이든 물어보세요
             </Greeting>
