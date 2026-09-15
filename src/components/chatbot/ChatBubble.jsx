@@ -2,6 +2,19 @@ import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import Button from "@components/common/Button";
 
+const IMAGE_MARKDOWN_REGEX =
+  /(?:!\[([^\]]*)]|\[이미지])\s*\(\s*(https?:\/\/[^\s)]+)\s*\)/g;
+
+const stripImageMarkdown = (text) => {
+  if (!text) return text;
+
+  return text
+    .replace(IMAGE_MARKDOWN_REGEX, "")
+    .replace(/^[ \t]*[-*]\s*$/gm, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+};
+
 const ChatBubble = ({
   role,
   text,
@@ -19,7 +32,7 @@ const ChatBubble = ({
 
   return (
     <AiRow>
-      <AiBubble>{text}</AiBubble>
+      <AiBubble>{stripImageMarkdown(text)}</AiBubble>
       {recommendedProducts && recommendedProducts.length > 0 && (
         <ProductList>
           {recommendedProducts.map((product) => (
