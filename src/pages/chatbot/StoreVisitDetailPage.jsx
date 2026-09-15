@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import Button from "@components/common/Button";
@@ -9,12 +9,14 @@ import { formatVisitNeedsSummary, mapVisitCard } from "@utils/visitCardMappers";
 
 const StoreVisitDetailPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { cardId } = useParams();
   const { nickname } = useMemberProfile();
   const [requestId, setRequestId] = useState(cardId);
   const [card, setCard] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const backTo = location.state?.from ?? "/chatbot/store-visit";
 
   if (cardId !== requestId) {
     setRequestId(cardId);
@@ -47,7 +49,7 @@ const StoreVisitDetailPage = () => {
   if (isLoading) {
     return (
       <PageWrapper>
-        <PageHeader title="AI 방문 카드 상세" backTo="/chatbot/store-visit" />
+        <PageHeader title="AI 방문 카드 상세" backTo={backTo} />
         <EmptyState>불러오는 중...</EmptyState>
       </PageWrapper>
     );
@@ -56,7 +58,7 @@ const StoreVisitDetailPage = () => {
   if (notFound || !card) {
     return (
       <PageWrapper>
-        <PageHeader title="AI 방문 카드 상세" backTo="/chatbot/store-visit" />
+        <PageHeader title="AI 방문 카드 상세" backTo={backTo} />
         <EmptyState>방문 카드를 찾을 수 없습니다.</EmptyState>
       </PageWrapper>
     );
@@ -67,7 +69,7 @@ const StoreVisitDetailPage = () => {
 
   return (
     <PageWrapper>
-      <PageHeader title="AI 방문 카드 상세" backTo="/chatbot/store-visit" />
+      <PageHeader title="AI 방문 카드 상세" backTo={backTo} />
 
       <Main>
         <Heading>
@@ -105,7 +107,11 @@ const StoreVisitDetailPage = () => {
 
         <ReserveButton
           type="button"
-          onClick={() => navigate("/chatbot/store-list", { state: { cardId } })}
+          onClick={() =>
+            navigate("/chatbot/store-list", {
+              state: { cardId, from: location.state?.from },
+            })
+          }
         >
           근처 매장 보기
         </ReserveButton>

@@ -10,11 +10,28 @@ import useMemberProfile from "@hooks/useMemberProfile";
 import { sendChatMessage } from "@apis/chat";
 import { createVisitCard } from "@apis/visitCards";
 
+const CHAT_STORAGE_KEY = "aura_chat_state";
+const VISIT_CARD_ACTION_STATE = { from: "/chatbot" };
+
+const readStoredChat = () => {
+  try {
+    const raw = sessionStorage.getItem(CHAT_STORAGE_KEY);
+    if (!raw) return { messages: [], sessionId: null };
+    const parsed = JSON.parse(raw);
+    return {
+      messages: Array.isArray(parsed.messages) ? parsed.messages : [],
+      sessionId: parsed.sessionId ?? null,
+    };
+  } catch {
+    return { messages: [], sessionId: null };
+  }
+};
+
 const ChatPage = () => {
   const navigate = useNavigate();
   const { nickname } = useMemberProfile();
-  const [messages, setMessages] = useState([]);
-  const [sessionId, setSessionId] = useState(null);
+  const [messages, setMessages] = useState(() => readStoredChat().messages);
+  const [sessionId, setSessionId] = useState(() => readStoredChat().sessionId);
   const [isSending, setIsSending] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const listEndRef = useRef(null);
@@ -22,6 +39,13 @@ const ChatPage = () => {
   useEffect(() => {
     listEndRef.current?.scrollIntoView({ block: "end" });
   }, [messages, isSending]);
+
+  useEffect(() => {
+    sessionStorage.setItem(
+      CHAT_STORAGE_KEY,
+      JSON.stringify({ messages, sessionId }),
+    );
+  }, [messages, sessionId]);
 
   useEffect(() => {
     if (!toastMessage) return undefined;
@@ -48,6 +72,7 @@ const ChatPage = () => {
             to: cardId
               ? `/chatbot/store-visit/${cardId}`
               : "/chatbot/store-visit",
+            state: VISIT_CARD_ACTION_STATE,
           }
         : undefined,
     };
@@ -109,6 +134,7 @@ const ChatPage = () => {
             to: card?.id
               ? `/chatbot/store-visit/${card.id}`
               : "/chatbot/store-visit",
+            state: VISIT_CARD_ACTION_STATE,
           },
         },
       ]);

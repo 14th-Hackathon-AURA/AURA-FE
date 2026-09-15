@@ -43,7 +43,7 @@ const ChatBubble = ({
         </ProductList>
       )}
       {action && (
-        <ActionButton as={Link} to={action.to}>
+        <ActionButton as={Link} to={action.to} state={action.state}>
           {action.label}
         </ActionButton>
       )}
@@ -74,7 +74,7 @@ const UserBubble = styled.p`
   font-size: 1.2rem;
   line-height: 1.5;
   color: var(--color-black);
-  text-align: right;
+  text-align: left;
   white-space: pre-line;
 `;
 
@@ -109,7 +109,7 @@ const pulse = keyframes`
 `;
 
 const SkeletonBubble = styled.div`
-  width: 80%;
+  width: 60%;
   height: 4rem;
   border-radius: 0.4rem;
   background: #f0f0f0;
