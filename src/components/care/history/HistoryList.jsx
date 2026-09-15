@@ -3,7 +3,7 @@ import HistoryCard from "./HistoryCard";
 
 const HistoryList = ({ items, onEdit, onDelete, onOpen }) => {
   if (items.length === 0) {
-    return <EmptyText>진단 이력이 없습니다.</EmptyText>;
+    return <EmptyText>진단 이력이 없습니다</EmptyText>;
   }
 
   return (

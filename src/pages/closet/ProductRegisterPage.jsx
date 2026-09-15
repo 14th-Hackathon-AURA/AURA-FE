@@ -44,7 +44,7 @@ const ProductRegisterPage = () => {
 
         {manualInputRequired.length > 0 && (
           <ManualNotice>
-            아래 항목은 직접 입력해주세요:{" "}
+            아래 항목을 직접 입력해주세요:{" "}
             {manualInputRequired
               .map((field) => MANUAL_FIELD_LABELS[field] || field)
               .join(", ")}

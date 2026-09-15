@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
 import StoreSearchBar from "@components/care/reservation/StoreSearchBar";
@@ -12,6 +12,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 const StoreListPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { nickname } = useMemberProfile();
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -22,6 +23,13 @@ const StoreListPage = () => {
   const backTo = location.state?.cardId
     ? `/chatbot/store-visit/${location.state.cardId}`
     : "/chatbot/store-visit";
+  const backState = location.state?.from
+    ? { from: location.state.from }
+    : undefined;
+
+  const handleBack = () => {
+    navigate(backTo, backState ? { state: backState } : undefined);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -67,7 +75,7 @@ const StoreListPage = () => {
 
   return (
     <PageWrapper>
-      <PageHeader title="매장 정보" backTo={backTo} />
+      <PageHeader title="매장 정보" onBack={handleBack} />
 
       <Main>
         <Headline>

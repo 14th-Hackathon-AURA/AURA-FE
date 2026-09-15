@@ -2,7 +2,10 @@ import { useState } from "react";
 import styled from "styled-components";
 import sendIcon from "@assets/icons/chatbot/send.svg";
 
-const ChatInputBar = ({ onSubmit, placeholder = "궁금한 내용을 편하게 질문해주세요" }) => {
+const ChatInputBar = ({
+  onSubmit,
+  placeholder = "궁금한 내용을 편하게 질문해주세요",
+}) => {
   const [value, setValue] = useState("");
 
   const handleSubmit = (event) => {
@@ -49,7 +52,7 @@ const Input = styled.input`
   min-width: 0;
   border: none;
   background: transparent;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: var(--color-black);
 
   &::placeholder {

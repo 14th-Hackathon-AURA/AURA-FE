@@ -87,7 +87,7 @@ const ReceiptUploader = ({ previewUrl, isExtracting = false, onChange }) => {
       <HelpText>
         JPG, PNG 형식의 텍스트가 잘 보이는 사진을 올려주세요.
         <br />
-        사진이 없다면, 아래 정보칸에서 직접 작성할 수 있어요
+        사진이 없다면, 아래 정보칸에서 직접 작성할 수 있어요.
       </HelpText>
     </Section>
   );
@@ -171,7 +171,7 @@ const StatusText = styled.p`
 
 const HelpText = styled.p`
   margin: 1.6rem 0;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 400;
   line-height: 1.5;
   color: var(--color-black);
