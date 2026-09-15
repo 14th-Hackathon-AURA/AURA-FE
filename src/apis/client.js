@@ -23,10 +23,7 @@ const refreshAccessToken = async () => {
     throw new Error("No refresh token");
   }
 
-  const { data } = await axios.post(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/token/refresh/`,
-    { refresh },
-  );
+  const { data } = await api.post("/auth/token/refresh/", { refresh });
 
   localStorage.setItem("access_token", data.access);
   if (data.refresh) {
