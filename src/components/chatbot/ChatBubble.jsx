@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Button from "@components/common/Button";
 
 const ChatBubble = ({
@@ -51,6 +51,12 @@ const ChatBubble = ({
   );
 };
 
+export const ChatBubbleSkeleton = () => (
+  <AiRow aria-hidden="true">
+    <SkeletonBubble />
+  </AiRow>
+);
+
 export default ChatBubble;
 
 const UserRow = styled.div`
@@ -90,6 +96,24 @@ const AiBubble = styled.p`
   line-height: 1.5;
   color: var(--color-black);
   white-space: pre-line;
+`;
+
+const pulse = keyframes`
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+`;
+
+const SkeletonBubble = styled.div`
+  width: 80%;
+  height: 4rem;
+  border-radius: 0.4rem;
+  background: #f0f0f0;
+  animation: ${pulse} 1.8s ease-in-out infinite;
 `;
 
 const ProductList = styled.div`

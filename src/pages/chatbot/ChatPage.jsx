@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PageHeader from "@components/common/PageHeader";
-import ChatBubble from "@components/chatbot/ChatBubble";
+import ChatBubble, { ChatBubbleSkeleton } from "@components/chatbot/ChatBubble";
 import ChatInputBar from "@components/chatbot/ChatInputBar";
 import Button from "@components/common/Button";
 import CompleteOverlay from "@components/common/CompleteOverlay";
@@ -21,7 +21,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     listEndRef.current?.scrollIntoView({ block: "end" });
-  }, [messages]);
+  }, [messages, isSending]);
 
   useEffect(() => {
     if (!toastMessage) return undefined;
@@ -150,6 +150,7 @@ const ChatPage = () => {
                 onSaveCard={handleSaveCard}
               />
             ))}
+            {isSending && <ChatBubbleSkeleton />}
             <div ref={listEndRef} />
           </MessageList>
         )}
