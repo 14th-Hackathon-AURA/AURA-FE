@@ -8,8 +8,16 @@ const getOptionValue = (option) =>
 const getOptionLabel = (option) =>
   typeof option === "object" && option !== null ? option.label : option;
 
-const CategorySelect = ({ label, placeholder, value, options, onChange }) => {
+const CategorySelect = ({
+  label,
+  placeholder,
+  value,
+  options = [],
+  onChange,
+  emptyMessage,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
+  const hasOptions = options.length > 0;
 
   const matchedOption = options
     .map((option) => ({
@@ -40,20 +48,24 @@ const CategorySelect = ({ label, placeholder, value, options, onChange }) => {
 
         {isOpen && (
           <OptionsList>
-            {options.map((option) => {
-              const optionValue = getOptionValue(option);
-              const optionLabel = getOptionLabel(option);
+            {hasOptions ? (
+              options.map((option) => {
+                const optionValue = getOptionValue(option);
+                const optionLabel = getOptionLabel(option);
 
-              return (
-                <Option
-                  key={String(optionValue)}
-                  type="button"
-                  onClick={() => handleSelect(option)}
-                >
-                  {optionLabel}
-                </Option>
-              );
-            })}
+                return (
+                  <Option
+                    key={String(optionValue)}
+                    type="button"
+                    onClick={() => handleSelect(option)}
+                  >
+                    {optionLabel}
+                  </Option>
+                );
+              })
+            ) : emptyMessage ? (
+              <EmptyMessage>{emptyMessage}</EmptyMessage>
+            ) : null}
           </OptionsList>
         )}
       </Box>
@@ -117,5 +129,15 @@ const Option = styled.button`
   font-weight: 400;
   line-height: 1.5;
   color: var(--color-black);
+  background: var(--color-soft-gray);
+`;
+
+const EmptyMessage = styled.p`
+  margin: 0;
+  padding: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-placeholder-gray);
   background: var(--color-soft-gray);
 `;
