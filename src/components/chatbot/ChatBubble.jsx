@@ -1,16 +1,26 @@
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Button from "@components/common/Button";
-import { sendChatMessage } from "@apis/chat";
-import { createVisitCard } from "@apis/visitCards";
+
+const IMAGE_MARKDOWN_REGEX =
+  /(?:!\[([^\]]*)]|\[이미지])\s*\(\s*(https?:\/\/[^\s)]+)\s*\)/g;
+
+const stripImageMarkdown = (text) => {
+  if (!text) return text;
+
+  return text
+    .replace(IMAGE_MARKDOWN_REGEX, "")
+    .replace(/^[ \t]*[-*]\s*$/gm, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+};
 
 const ChatBubble = ({
   role,
   text,
   action,
   recommendedProducts,
-  sessionId,
-  onToast,
+  onSaveCard,
 }) => {
   if (role === "user") {
     return (
@@ -20,26 +30,9 @@ const ChatBubble = ({
     );
   }
 
-  const handleSaveCard = async (productCode) => {
-    try {
-      if (sessionId) {
-        await sendChatMessage({
-          sessionId,
-          message: "이 제품 카드로 저장해줘",
-          productCode,
-        });
-      } else {
-        await createVisitCard({ styleCode: productCode });
-      }
-      onToast?.("방문 카드로 저장했어요.");
-    } catch {
-      onToast?.("저장에 실패했어요. 다시 시도해주세요.");
-    }
-  };
-
   return (
     <AiRow>
-      <AiBubble>{text}</AiBubble>
+      <AiBubble>{stripImageMarkdown(text)}</AiBubble>
       {recommendedProducts && recommendedProducts.length > 0 && (
         <ProductList>
           {recommendedProducts.map((product) => (
@@ -54,7 +47,7 @@ const ChatBubble = ({
               </ProductInfo>
               <SaveButton
                 type="button"
-                onClick={() => handleSaveCard(product.style_code)}
+                onClick={() => onSaveCard?.(product.style_code)}
               >
                 카드 저장
               </SaveButton>
@@ -63,13 +56,19 @@ const ChatBubble = ({
         </ProductList>
       )}
       {action && (
-        <ActionButton as={Link} to={action.to}>
+        <ActionButton as={Link} to={action.to} state={action.state}>
           {action.label}
         </ActionButton>
       )}
     </AiRow>
   );
 };
+
+export const ChatBubbleSkeleton = () => (
+  <AiRow aria-hidden="true">
+    <SkeletonBubble />
+  </AiRow>
+);
 
 export default ChatBubble;
 
@@ -88,7 +87,7 @@ const UserBubble = styled.p`
   font-size: 1.2rem;
   line-height: 1.5;
   color: var(--color-black);
-  text-align: right;
+  text-align: left;
   white-space: pre-line;
 `;
 
@@ -110,6 +109,24 @@ const AiBubble = styled.p`
   line-height: 1.5;
   color: var(--color-black);
   white-space: pre-line;
+`;
+
+const pulse = keyframes`
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+`;
+
+const SkeletonBubble = styled.div`
+  width: 60%;
+  height: 4rem;
+  border-radius: 0.4rem;
+  background: #f0f0f0;
+  animation: ${pulse} 1.8s ease-in-out infinite;
 `;
 
 const ProductList = styled.div`
@@ -176,9 +193,12 @@ const SaveButton = styled.button`
 `;
 
 const ActionButton = styled(Button)`
-  width: 10rem;
-  padding: 1rem 1.2rem;
+  align-self: flex-start;
+  width: auto;
+  padding: 1.2rem 2.4rem;
   border-radius: 0.2rem;
   font-size: 1.2rem;
-  color: var(--color-ivory);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-white);
 `;

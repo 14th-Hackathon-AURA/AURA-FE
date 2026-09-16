@@ -97,13 +97,15 @@ const DiagnosisHistoryPage = () => {
 
       <Main>
         <Title>진단 이력</Title>
-        <HistoryFilters
-          product={product}
-          year={year}
-          productOptions={productOptions}
-          onProductChange={setProduct}
-          onYearChange={setYear}
-        />
+        {!isLoading && (items.length > 0 || product || year) && (
+          <HistoryFilters
+            product={product}
+            year={year}
+            productOptions={productOptions}
+            onProductChange={setProduct}
+            onYearChange={setYear}
+          />
+        )}
         {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
         {isLoading ? (
           <EmptyText>불러오는 중...</EmptyText>

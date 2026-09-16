@@ -37,7 +37,7 @@ const CommunityPage = () => {
           {isLoading ? (
             <EmptyState>불러오는 중...</EmptyState>
           ) : filteredPosts.length === 0 ? (
-            <EmptyState>게시물이 없어요</EmptyState>
+            <EmptyState>게시물이 없습니다</EmptyState>
           ) : (
             filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
           )}

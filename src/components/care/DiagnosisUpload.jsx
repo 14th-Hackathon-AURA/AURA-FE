@@ -10,7 +10,7 @@ const DiagnosisUpload = ({
   previewUrl,
   isDiagnosing,
   productId,
-  productOptions,
+  productOptions = [],
   productsLoading,
   errorMessage,
   onProductChange,
@@ -20,6 +20,7 @@ const DiagnosisUpload = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
+  const isProductsEmpty = !productsLoading && productOptions.length === 0;
 
   useEffect(() => {
     if (!isMenuOpen) return undefined;
@@ -70,6 +71,9 @@ const DiagnosisUpload = ({
         options={productOptions}
         value={productId}
         onChange={onProductChange}
+        emptyMessage={
+          isProductsEmpty ? "등록된 제품이 없습니다" : undefined
+        }
       />
 
       <UploadWrap onPointerDown={(event) => event.stopPropagation()}>

@@ -123,7 +123,7 @@ const ClosetPage = () => {
             onEdit={handleEdit}
           />
         ) : (
-          <EmptyText>상품이 없습니다.</EmptyText>
+          <EmptyText>상품이 없습니다</EmptyText>
         )}
       </Main>
 

@@ -6,7 +6,11 @@ const ChatbotButton = () => {
   const navigate = useNavigate();
 
   return (
-    <Fab type="button" onClick={() => navigate("/chatbot")} aria-label="챗봇">
+    <Fab
+      type="button"
+      onClick={() => navigate("/chatbot", { state: { resetChat: true } })}
+      aria-label="챗봇"
+    >
       <Icon src={chatbotIcon} alt="" />
     </Fab>
   );

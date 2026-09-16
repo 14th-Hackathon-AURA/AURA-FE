@@ -27,6 +27,13 @@ textarea {
   font: inherit;
 }
 
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  outline: none;
+}
+
 button {
   border: 0;
   padding: 0;
